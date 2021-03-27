@@ -1,10 +1,8 @@
 #ifndef LightStateService_h
 #define LightStateService_h
 
-#include <LightMqttSettingsService.h>
 
 #include <HttpEndpoint.h>
-#include <MqttPubSub.h>
 #include <WebSocketTxRx.h>
 
 #define LED_PIN 2
@@ -30,14 +28,19 @@
 class LightState {
  public:
   bool ledOn;
+  int16_t brigthness;
 
   static void read(LightState& settings, JsonObject& root) {
     root["led_on"] = settings.ledOn;
+    root["brightness"] = settings.brigthness;
   }
 
   static StateUpdateResult update(JsonObject& root, LightState& lightState) {
     boolean newState = root["led_on"] | DEFAULT_LED_STATE;
-    if (lightState.ledOn != newState) {
+    int16_t newBright = root["brightness"] | 100;
+
+    if (lightState.ledOn != newState || lightState.brigthness != newBright) {
+      lightState.brigthness = newBright;
       lightState.ledOn = newState;
       return StateUpdateResult::CHANGED;
     }
@@ -69,20 +72,18 @@ class LightState {
 class LightStateService : public StatefulService<LightState> {
  public:
   LightStateService(AsyncWebServer* server,
-                    SecurityManager* securityManager,
-                    AsyncMqttClient* mqttClient,
-                    LightMqttSettingsService* lightMqttSettingsService);
+                    SecurityManager* securityManager);
   void begin();
 
  private:
   HttpEndpoint<LightState> _httpEndpoint;
-  MqttPubSub<LightState> _mqttPubSub;
   WebSocketTxRx<LightState> _webSocket;
-  AsyncMqttClient* _mqttClient;
-  LightMqttSettingsService* _lightMqttSettingsService;
+  
 
   void registerConfig();
-  void onConfigUpdated();
+  void onConfigUpdated(const String& originId);
+
+  
 };
 
 #endif

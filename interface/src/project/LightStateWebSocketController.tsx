@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 
-import { Typography, Box, Switch } from '@material-ui/core';
+import { Typography, Box, Switch, Slider } from '@material-ui/core';
 import { WEB_SOCKET_ROOT } from '../api';
 import { WebSocketControllerProps, WebSocketFormLoader, WebSocketFormProps, webSocketController } from '../components';
 import { SectionContent, BlockFormControlLabel } from '../components';
 
 import { LightState } from './types';
+import { makeStyles } from "@material-ui/core/styles";
 
 export const LIGHT_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "lightState";
 
@@ -37,8 +38,20 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
   const { data, saveData, setData } = props;
 
   const changeLedOn = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ led_on: event.target.checked }, saveData);
+    setData({ led_on: event.target.checked, brightness: data.brightness }, saveData);
   }
+
+  const changeBrighness = (event: React.ChangeEvent<{}>, newValue: number | number[]) => {
+    setData({ led_on: true, brightness: +newValue }, saveData);
+  }
+
+  const useStyles = makeStyles({
+    root: {
+      width: 300
+    }
+  });
+
+  const classes = useStyles();
 
   return (
     <ValidatorForm onSubmit={saveData}>
@@ -57,6 +70,18 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
         }
         label="LED State?"
       />
+      <div className={classes.root}>
+      <Slider
+              value={data.brightness}
+              onChange={changeBrighness}
+              defaultValue={100}
+              aria-labelledby="discrete-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              min={1}
+              max={100}
+            />
+      </div>
     </ValidatorForm>
   );
 }

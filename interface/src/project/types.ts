@@ -1,5 +1,6 @@
 export interface LightState {
   led_on: boolean;
+  brightness: number;
 }
 
 export interface LightMqttSettings { 
