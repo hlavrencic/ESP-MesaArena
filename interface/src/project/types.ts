@@ -1,6 +1,10 @@
+import { Dimensions } from "../components/SvgService";
+
 export interface LightState {
   led_on: boolean;
   brightness: number;
+  arduinoPosition: Dimensions | undefined;
+  nextPosition: Dimensions;
 }
 
 export interface LightMqttSettings { 

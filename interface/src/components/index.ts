@@ -9,6 +9,7 @@ export { default as SectionContent } from './SectionContent';
 export { default as WebSocketFormLoader } from './WebSocketFormLoader';
 export { default as ErrorButton } from './ErrorButton';
 export { default as SingleUpload } from './SingleUpload';
+export { default as SvgComponent } from './SvgComponent';
 
 export * from './RestFormLoader';
 export * from './RestController';

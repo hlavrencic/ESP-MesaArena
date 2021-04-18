@@ -4,6 +4,7 @@
 
 #include <HttpEndpoint.h>
 #include <WebSocketTxRx.h>
+#include <MotorsController.h>
 
 #define LED_PIN 2
 #define PRINT_DELAY 5000
@@ -29,56 +30,59 @@ class LightState {
  public:
   bool ledOn;
   int16_t brigthness;
+  Dimensions* arduinoPosition;
+  Dimensions* nextPosition;
 
   static void read(LightState& settings, JsonObject& root) {
+    Serial.print("reading... "); 
+    
     root["led_on"] = settings.ledOn;
     root["brightness"] = settings.brigthness;
+    root["arduinoPosition"]["x"] = settings.arduinoPosition->x;
+    root["arduinoPosition"]["y"] = settings.arduinoPosition->y;
+
+    serializeJson(root, Serial); Serial.println(""); 
   }
 
   static StateUpdateResult update(JsonObject& root, LightState& lightState) {
+    Serial.print("update: "); serializeJson(root, Serial);
+
     boolean newState = root["led_on"] | DEFAULT_LED_STATE;
     int16_t newBright = root["brightness"] | 100;
+    
+    int32_t newNextPositionX = root["nextPosition"]["x"] | 0;
+    int32_t newNextPositionY = root["nextPosition"]["y"] | 0;
 
-    if (lightState.ledOn != newState || lightState.brigthness != newBright) {
+    Serial.println("updated.");
+
+    if (lightState.ledOn != newState || 
+    lightState.brigthness != newBright || 
+    lightState.nextPosition->x != newNextPositionX ||
+    lightState.nextPosition->y != newNextPositionY ) {
       lightState.brigthness = newBright;
       lightState.ledOn = newState;
+      lightState.nextPosition->x = newNextPositionX;
+      lightState.nextPosition->y = newNextPositionY;
+
       return StateUpdateResult::CHANGED;
     }
     return StateUpdateResult::UNCHANGED;
   }
 
-  static void haRead(LightState& settings, JsonObject& root) {
-    root["state"] = settings.ledOn ? ON_STATE : OFF_STATE;
-  }
-
-  static StateUpdateResult haUpdate(JsonObject& root, LightState& lightState) {
-    String state = root["state"];
-    // parse new led state 
-    boolean newState = false;
-    if (state.equals(ON_STATE)) {
-      newState = true;
-    } else if (!state.equals(OFF_STATE)) {
-      return StateUpdateResult::ERROR;
-    }
-    // change the new state, if required
-    if (lightState.ledOn != newState) {
-      lightState.ledOn = newState;
-      return StateUpdateResult::CHANGED;
-    }
-    return StateUpdateResult::UNCHANGED;
-  }
+  
 };
 
 class LightStateService : public StatefulService<LightState> {
  public:
   LightStateService(AsyncWebServer* server,
-                    SecurityManager* securityManager);
+                    SecurityManager* securityManager,
+                    MotorsController* motorsController);
   void begin();
 
  private:
   HttpEndpoint<LightState> _httpEndpoint;
   WebSocketTxRx<LightState> _webSocket;
-  
+  MotorsController* _motorsController;
 
   void registerConfig();
   void onConfigUpdated(const String& originId);

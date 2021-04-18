@@ -4,10 +4,11 @@ import { ValidatorForm } from 'react-material-ui-form-validator';
 import { Typography, Box, Switch, Slider } from '@material-ui/core';
 import { WEB_SOCKET_ROOT } from '../api';
 import { WebSocketControllerProps, WebSocketFormLoader, WebSocketFormProps, webSocketController } from '../components';
-import { SectionContent, BlockFormControlLabel } from '../components';
+import { SectionContent, BlockFormControlLabel, SvgComponent } from '../components';
 
 import { LightState } from './types';
 import { makeStyles } from "@material-ui/core/styles";
+import { Dimensions } from '../components/SvgService';
 
 export const LIGHT_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "lightState";
 
@@ -38,11 +39,16 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
   const { data, saveData, setData } = props;
 
   const changeLedOn = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ led_on: event.target.checked, brightness: data.brightness }, saveData);
+    setData({ led_on: event.target.checked, brightness: data.brightness, arduinoPosition: data.arduinoPosition, nextPosition: data.nextPosition }, saveData);
   }
 
   const changeBrighness = (event: React.ChangeEvent<{}>, newValue: number | number[]) => {
-    setData({ led_on: true, brightness: +newValue }, saveData);
+    setData({ led_on: true, brightness: +newValue, arduinoPosition: data.arduinoPosition, nextPosition: data.nextPosition }, saveData);
+    
+  }
+
+  const sendNextPosition = (nextPosition: Dimensions) => {
+    setData({led_on: data.led_on, brightness: data.brightness, arduinoPosition: data.arduinoPosition, nextPosition: nextPosition}, saveData);
   }
 
   const useStyles = makeStyles({
@@ -82,6 +88,7 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
               max={100}
             />
       </div>
+      <SvgComponent onUpdate={sendNextPosition} arduinoPosition={data.arduinoPosition} />
     </ValidatorForm>
   );
 }

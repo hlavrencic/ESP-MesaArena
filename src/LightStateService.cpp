@@ -1,8 +1,8 @@
 #include <LightStateService.h>
 
-
 LightStateService::LightStateService(AsyncWebServer* server,
-                                     SecurityManager* securityManager) :
+                                     SecurityManager* securityManager,
+                                     MotorsController* motorsController) :
     _httpEndpoint(LightState::read,
                   LightState::update,
                   this,
@@ -17,8 +17,8 @@ LightStateService::LightStateService(AsyncWebServer* server,
                LIGHT_SETTINGS_SOCKET_PATH,
                securityManager,
                AuthenticationPredicates::IS_AUTHENTICATED){
-  // configure led to be output
-  pinMode(LED_PIN, OUTPUT);
+  
+  _motorsController = motorsController;
 
   // configure settings service update handler to update LED state
   addUpdateHandler([&](const String& originId) { onConfigUpdated(originId); }, false);
@@ -26,11 +26,14 @@ LightStateService::LightStateService(AsyncWebServer* server,
 
 void LightStateService::begin() {
   _state.ledOn = DEFAULT_LED_STATE;
+  _state.arduinoPosition = new Dimensions();
+  _state.nextPosition = new Dimensions();
   onConfigUpdated("INIT");
 }
 
 void LightStateService::onConfigUpdated(const String& originId) {
-  digitalWrite(LED_PIN, _state.ledOn ? LED_ON : LED_OFF);
+  if(originId.compareTo("A MANO") == 0) return; 
+  _motorsController->goTo(*_state.nextPosition);  
 }
 
 void LightStateService::registerConfig() {
