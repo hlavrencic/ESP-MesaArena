@@ -149,3 +149,7 @@ void Carrito::moveTo(long pos, float speed){
 long Carrito::getPos(){
     return _stepper->currentPosition();
 }
+
+EstadoCalibracion Carrito::getState(){
+    return _estadoCalibracion;
+}

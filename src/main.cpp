@@ -39,19 +39,24 @@ void loop() {
 
   if(lastUpdate + 1000 < millis()){
     lastUpdate = millis();
-    lightStateService.update([&](LightState& newState){
+    
+    if(motorsController.mode == MotorsControllerMode::ERROR){
+      Serial.println("ERROR");
+    } else {
+      lightStateService.update([&](LightState& newState){
 
-      Dimensions pos;
-      motorsController.getPos(pos);
+        Dimensions pos;
+        motorsController.getPos(pos);
 
-      if(newState.arduinoPosition->x != pos.x || newState.arduinoPosition->y != pos.y){
-        newState.arduinoPosition->x = pos.x;
-        newState.arduinoPosition->y = pos.y;
-        return StateUpdateResult::CHANGED;
-      }
+        if(newState.arduinoPosition->x != pos.x || newState.arduinoPosition->y != pos.y){
+          newState.arduinoPosition->x = pos.x;
+          newState.arduinoPosition->y = pos.y;
+          return StateUpdateResult::CHANGED;
+        }
 
-      return StateUpdateResult::UNCHANGED;
-      
-    }, "A MANO");
+        return StateUpdateResult::UNCHANGED;
+        
+      }, "A MANO");
+    }
   }
 }

@@ -52,7 +52,7 @@
     private:
         bool _enabled = true;
         bool _arrived = false;
-        long _arrivedTick = 0;
+        unsigned long _arrivedTick = 0;
         AccelStepper stepper = AccelStepper(8, motor1Pin3, motor1Pin1 , motor1Pin2, motor1Pin4);
         Carrito carrito1 = Carrito(&stepper, 4000U, false, end1Pin);
 

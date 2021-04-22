@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 
-import { Typography, Box, Switch, Slider } from '@material-ui/core';
+import { Typography, Box, Switch, Slider, Input, Button } from '@material-ui/core';
 import { WEB_SOCKET_ROOT } from '../api';
 import { WebSocketControllerProps, WebSocketFormLoader, WebSocketFormProps, webSocketController } from '../components';
 import { SectionContent, BlockFormControlLabel, SvgComponent } from '../components';
@@ -47,6 +47,18 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
     
   }
 
+  const inputChangeX = (event: React.ChangeEvent<HTMLInputElement>) => {
+    data.nextPosition = data.nextPosition ?? {x:0, y:0};
+    data.nextPosition.x = +event.target.value;
+    setData({led_on: data.led_on, brightness: data.brightness, arduinoPosition: data.arduinoPosition, nextPosition: data.nextPosition});
+  }
+
+  const inputChangeY = (event: React.ChangeEvent<HTMLInputElement>) => {
+    data.nextPosition = data.nextPosition ?? {x:0, y:0};
+    data.nextPosition.y = +event.target.value;
+    setData({led_on: data.led_on, brightness: data.brightness, arduinoPosition: data.arduinoPosition, nextPosition: data.nextPosition});
+  }
+
   const sendNextPosition = (nextPosition: Dimensions) => {
     setData({led_on: data.led_on, brightness: data.brightness, arduinoPosition: data.arduinoPosition, nextPosition: nextPosition}, saveData);
   }
@@ -89,6 +101,26 @@ function LightStateWebSocketControllerForm(props: LightStateWebSocketControllerF
             />
       </div>
       <SvgComponent onUpdate={sendNextPosition} arduinoPosition={data.arduinoPosition} />
+
+      <BlockFormControlLabel
+        control={
+          <Input
+            onChange={inputChangeX}
+            color="primary"
+          />
+        }
+        label="X"
+      />
+      <BlockFormControlLabel
+        control={
+          <Input
+            onChange={inputChangeY}
+            color="primary"
+          />
+        }
+        label="Y"
+      />
+      <Button onClick={saveData} >Send</Button>
     </ValidatorForm>
   );
 }

@@ -14,11 +14,12 @@
             float getMaxSpeed();
             void moveTo(long pos, float speed);
             long getPos();
+            EstadoCalibracion getState();
         private:
+            EstadoCalibracion _estadoCalibracion = EstadoCalibracion::sinCalibrar;
             int8_t getSentido();
             AccelStepper *_stepper;
-            unsigned int _maxPos;
-            EstadoCalibracion _estadoCalibracion = EstadoCalibracion::sinCalibrar;
+            long _maxPos;
             bool _logOn;
             uint8_t _endPin;
     };

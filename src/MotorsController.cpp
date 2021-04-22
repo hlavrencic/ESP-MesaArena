@@ -49,20 +49,21 @@ void MotorsController::loop(){
         enableMotors(true);
         _arrived = buscaCoorrdenadas.andar();
         if(_arrived){
-            Serial.println("ARRIVED");
             mode = MotorsControllerMode::STANDBY; 
             _arrivedTick = millis();
+        } else if(carrito1.getState() == EstadoCalibracion::errorCalibracion || carrito2.getState() == EstadoCalibracion::errorCalibracion) {
+            mode = MotorsControllerMode::ERROR;
         }
+
         break;
     case MotorsControllerMode::STANDBY:
         if(_enabled && _arrivedTick + 1000 < millis()){
-            Serial.println("DISABLING...");
             enableMotors(false);
         }
         break;
     default:
         mode = MotorsControllerMode::ERROR;
-        Serial.println("ERROR.");
+        enableMotors(false);
         break;
     }
     
