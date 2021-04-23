@@ -22,6 +22,8 @@ LightStateService::LightStateService(AsyncWebServer* server,
 
   // configure settings service update handler to update LED state
   addUpdateHandler([&](const String& originId) { onConfigUpdated(originId); }, false);
+
+  
 }
 
 void LightStateService::begin() {
@@ -34,8 +36,4 @@ void LightStateService::begin() {
 void LightStateService::onConfigUpdated(const String& originId) {
   if(originId.compareTo("A MANO") == 0) return; 
   _motorsController->goTo(*_state.nextPosition);  
-}
-
-void LightStateService::registerConfig() {
-  
 }

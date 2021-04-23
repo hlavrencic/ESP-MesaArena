@@ -15,7 +15,7 @@ void MotorsController::begin(){
     pinMode(end2Pin, INPUT_PULLUP);
 
     stepper.setMaxSpeed(300);
-    stepper2.setMaxSpeed(1000);
+    stepper2.setMaxSpeed(800);
 
 
 }

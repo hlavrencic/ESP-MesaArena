@@ -1,7 +1,7 @@
 #include <ESP8266React.h>
 #include <MotorsController.h>
 #include <LightStateService.h>
-
+#include <CurrentPositionController.h>
 
 #define SERIAL_BAUD_RATE 115200
 
@@ -12,6 +12,13 @@ LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
                                                         &motorsController);
 
+CurrentPositionController currentPositionController = CurrentPositionController(&server,
+                                                        esp8266React.getSecurityManager(),
+                                                        &motorsController);
+
+NextPositionController nextcontroller = NextPositionController(&server,
+                                                        esp8266React.getSecurityManager(),
+                                                        &motorsController);
 
 void setup() {
   // start serial and filesystem

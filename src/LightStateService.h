@@ -82,11 +82,11 @@ class LightStateService : public StatefulService<LightState> {
  private:
   HttpEndpoint<LightState> _httpEndpoint;
   WebSocketTxRx<LightState> _webSocket;
+  
   MotorsController* _motorsController;
 
   void registerConfig();
   void onConfigUpdated(const String& originId);
-
   
 };
 
