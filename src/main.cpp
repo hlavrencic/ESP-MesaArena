@@ -20,6 +20,14 @@ NextPositionController nextcontroller = NextPositionController(&server,
                                                         esp8266React.getSecurityManager(),
                                                         &motorsController);
 
+NextPositionFullController nextPositionFullcontroller = NextPositionFullController(&server,
+                                                        esp8266React.getSecurityManager(),
+                                                        &motorsController); 
+
+MotorsConfigController motorsConfigController = MotorsConfigController(&server,
+                                                        esp8266React.getSecurityManager(),
+                                                        &motorsController);                                                  
+
 void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);

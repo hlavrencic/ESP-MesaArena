@@ -15,7 +15,7 @@ void MotorsController::begin(){
     pinMode(end2Pin, INPUT_PULLUP);
 
     stepper.setMaxSpeed(300);
-    stepper2.setMaxSpeed(800);
+    stepper2.setMaxSpeed(600);
 
 
 }
@@ -31,14 +31,21 @@ void MotorsController::goTo(Dimensions& dimensions){
     buscaCoorrdenadas.irHasta(dimensions.x, dimensions.y);
 }
 
+void MotorsController::goTo(long xPos, long yPos, float xSpeed, float ySpeed){
+    if(mode != MotorsControllerMode::STANDBY) return;
+    mode = MotorsControllerMode::TRAVELLING;
+    carrito1->moveTo(xPos, xSpeed);
+    carrito2->moveTo(yPos, ySpeed);
+}
+
 void MotorsController::loop(){
     switch (mode)
     {
     case MotorsControllerMode::CALIBRATING:
     {
         enableMotors(true);
-        auto calibrado1 = carrito1.calibrar();
-        auto calibrado2 = carrito2.calibrar();
+        auto calibrado1 = carrito1->calibrar();
+        auto calibrado2 = carrito2->calibrar();
 
         if(calibrado1 && calibrado2){
             mode = MotorsControllerMode::STANDBY;
@@ -51,7 +58,7 @@ void MotorsController::loop(){
         if(_arrived){
             mode = MotorsControllerMode::STANDBY; 
             _arrivedTick = millis();
-        } else if(carrito1.getState() == EstadoCalibracion::errorCalibracion || carrito2.getState() == EstadoCalibracion::errorCalibracion) {
+        } else if(carrito1->getState() == EstadoCalibracion::errorCalibracion || carrito2->getState() == EstadoCalibracion::errorCalibracion) {
             mode = MotorsControllerMode::ERROR;
         }
 
@@ -70,8 +77,8 @@ void MotorsController::loop(){
 }
 
 void MotorsController::startMoving(float speedX, float speedY){
-    carrito1.setSpeed(speedX);
-    carrito2.setSpeed(speedY);
+    carrito1->setSpeed(speedX);
+    carrito2->setSpeed(speedY);
 }
 
 void MotorsController::enableMotors(bool state){
@@ -85,4 +92,14 @@ void MotorsController::enableMotors(bool state){
         stepper.disableOutputs();
         stepper2.disableOutputs();     
     }
+}
+
+void MotorsController::config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed){
+    stepper.setMaxSpeed(xMaxSpeed);
+    stepper2.setMaxSpeed(yMaxSpeed);
+    delete(carrito1);
+    delete(carrito2);
+    carrito1=new Carrito(&stepper, xMax, false, end1Pin);
+    carrito2=new Carrito(&stepper2, yMax, false, end2Pin);
+    mode = MotorsControllerMode::CALIBRATING;
 }

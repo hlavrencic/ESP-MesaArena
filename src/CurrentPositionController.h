@@ -25,6 +25,8 @@
 
 #define GET_POS_ENDPOINT_PATH "/rest/getPos"
 #define GO_TO_ENDPOINT_PATH "/rest/goTo"
+#define GO_TO_SPEED_ENDPOINT_PATH "/rest/goToSpeed"
+#define CONFIG_ENDPOINT_PATH "/rest/config"
 
 
 class CurrentPositionController : public StatefulService<Dimensions> {
@@ -62,6 +64,64 @@ class NextPositionController : public StatefulService<Dimensions> {
   }
 
   void goTo(const String& originId);
+};
+
+class NextPositionFullController : public StatefulService<DimensionsFull> {
+ public:
+  NextPositionFullController(AsyncWebServer* server,
+                    SecurityManager* securityManager,
+                    MotorsController* motorsController);
+
+ private:
+  HttpEndpoint<DimensionsFull> _httpEndpoint;
+  MotorsController* _motorsController;
+  
+  static void read(DimensionsFull& model, JsonObject& root){
+      root["guid"] = model.guid;
+      root["x"] = model.xPos;
+      root["y"] = model.yPos;
+      root["xSpeed"] = model.xSpeed;
+      root["ySpeed"] = model.ySpeed;
+  }
+
+  static StateUpdateResult update(JsonObject& root, DimensionsFull& model){
+      model.guid = root["guid"];
+      model.xPos = root["x"];
+      model.yPos = root["y"];
+      model.xSpeed = root["xSpeed"];
+      model.ySpeed = root["ySpeed"];
+      return StateUpdateResult::CHANGED;
+  }
+
+  void goTo(const String& originId);
+};
+
+class MotorsConfigController : public StatefulService<MotorsConfig> {
+ public:
+  MotorsConfigController(AsyncWebServer* server,
+                    SecurityManager* securityManager,
+                    MotorsController* motorsController);
+
+ private:
+  HttpEndpoint<MotorsConfig> _httpEndpoint;
+  MotorsController* _motorsController;
+  
+  static void read(MotorsConfig& model, JsonObject& root){
+      root["xMax"] = model.xMax;
+      root["yMax"] = model.yMax;
+      root["xMaxSpeed"] = model.xMaxSpeed;
+      root["yMaxSpeed"] = model.yMaxSpeed;
+  }
+
+  static StateUpdateResult update(JsonObject& root, MotorsConfig& model){
+      model.xMax = root["xMax"];
+      model.yMax = root["yMax"];
+      model.xMaxSpeed = root["xMaxSpeed"];
+      model.yMaxSpeed = root["yMaxSpeed"];
+      return StateUpdateResult::CHANGED;
+  }
+
+  void config(const String& originId);
 };
 
 #endif

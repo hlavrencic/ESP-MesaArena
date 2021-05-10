@@ -47,19 +47,20 @@
         void loop();
         void getPos(Dimensions& dimensions);
         void goTo(Dimensions& dimensions);
+        void goTo(long xPos, long yPos, float xSpeed, float ySpeed);
         void startMoving(float speedX, float speedY);
+        void config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed);
         MotorsControllerMode mode = MotorsControllerMode::CALIBRATING;
     private:
         bool _enabled = true;
         bool _arrived = false;
         unsigned long _arrivedTick = 0;
         AccelStepper stepper = AccelStepper(8, motor1Pin3, motor1Pin1 , motor1Pin2, motor1Pin4);
-        Carrito carrito1 = Carrito(&stepper, 4000U, false, end1Pin);
-
+        Carrito* carrito1 = new Carrito(&stepper, 4000U, false, end1Pin);
         AccelStepper stepper2 = AccelStepper(8, motor2Pin4, motor2Pin2, motor2Pin1, motor2Pin3);
-        Carrito carrito2 = Carrito(&stepper2, 35000U, false, end2Pin);
+        Carrito* carrito2 = new Carrito(&stepper2, 35000U, false, end2Pin);
 
-        BuscaCoorrdenadas buscaCoorrdenadas = BuscaCoorrdenadas(&carrito1, &carrito2);
+        BuscaCoorrdenadas buscaCoorrdenadas = BuscaCoorrdenadas(carrito1, carrito2);
 
         void enableMotors(bool state);
     };

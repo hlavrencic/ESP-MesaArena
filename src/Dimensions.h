@@ -9,4 +9,21 @@
         int32_t y;
     };
 
+    struct DimensionsFull
+    {
+        const char* guid;
+        long xPos;
+        long yPos;
+        float xSpeed;
+        float ySpeed;
+    };
+
+    struct MotorsConfig
+    {
+        uint xMax;
+        uint yMax;
+        float xMaxSpeed;
+        float yMaxSpeed;
+    };
+
 #endif

@@ -9,8 +9,6 @@
     private:
         Carrito *_carrito1;
         Carrito *_carrito2;
-        float _ajusteVelocidad1 = 0.4F;
-        unsigned short VELOCIDAD_MAX = 1000;
         long _irHasta1 = 0;
         long _irHasta2 = 0;
     public:

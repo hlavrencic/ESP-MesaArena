@@ -46,3 +46,45 @@ NextPositionController::NextPositionController(AsyncWebServer* server,
 void NextPositionController::goTo(const String& originId){
   _motorsController->goTo(_state);
 }
+
+NextPositionFullController::NextPositionFullController(AsyncWebServer* server,
+                                     SecurityManager* securityManager,
+                                     MotorsController* motorsController) : 
+    _httpEndpoint(NextPositionFullController::read,
+                  NextPositionFullController::update,
+                  this,
+                  server,
+                  GO_TO_SPEED_ENDPOINT_PATH,
+                  securityManager,
+                  AuthenticationPredicates::IS_AUTHENTICATED)                                     
+{
+  
+  _motorsController = motorsController;
+
+  addUpdateHandler([&](const String& originId) { goTo(originId); }, false);
+}
+
+void NextPositionFullController::goTo(const String& originId){
+  _motorsController->goTo(_state.xPos, _state.yPos, _state.xSpeed, _state.ySpeed );
+}
+
+MotorsConfigController::MotorsConfigController(AsyncWebServer* server,
+                                     SecurityManager* securityManager,
+                                     MotorsController* motorsController) : 
+    _httpEndpoint(MotorsConfigController::read,
+                  MotorsConfigController::update,
+                  this,
+                  server,
+                  CONFIG_ENDPOINT_PATH,
+                  securityManager,
+                  AuthenticationPredicates::IS_AUTHENTICATED)                                     
+{
+  
+  _motorsController = motorsController;
+
+  addUpdateHandler([&](const String& originId) { config(originId); }, false);
+}
+
+void MotorsConfigController::config(const String& originId){
+  _motorsController->config(_state.xMax, _state.yMax, _state.xMaxSpeed, _state.yMaxSpeed );
+}
