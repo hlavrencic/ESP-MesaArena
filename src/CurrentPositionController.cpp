@@ -44,7 +44,7 @@ NextPositionController::NextPositionController(AsyncWebServer* server,
 }
 
 void NextPositionController::goTo(const String& originId){
-  _motorsController->goTo(_state);
+  _state.delay = _motorsController->goTo(_state);
 }
 
 NextPositionFullController::NextPositionFullController(AsyncWebServer* server,

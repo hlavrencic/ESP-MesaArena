@@ -54,6 +54,7 @@ class NextPositionController : public StatefulService<Dimensions> {
   static void read(Dimensions& model, JsonObject& root){
       root["x"] = model.x;
       root["y"] = model.y;
+      root["delay"] = model.delay;
   }
 
   static StateUpdateResult update(JsonObject& root, Dimensions& model){

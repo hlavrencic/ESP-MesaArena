@@ -18,7 +18,7 @@ long BuscaCoorrdenadas::irHasta2(){
     return _irHasta2;
 }
 
-void BuscaCoorrdenadas::irHasta(long pos1, long pos2)
+float BuscaCoorrdenadas::irHasta(long pos1, long pos2)
 {
     _irHasta1 = pos1;
     _irHasta2 = pos2;
@@ -36,7 +36,14 @@ void BuscaCoorrdenadas::irHasta(long pos1, long pos2)
 
     _carrito1->moveTo(pos1, velocidad1);
     _carrito2->moveTo(pos2, velocidad2);
-
+    
+    auto tiempo1 = distancia1 / velocidad1; 
+    auto tiempo2 = distancia2 / velocidad2; 
+    if(tiempo1 > tiempo2){
+        return tiempo1;
+    } else {
+        return tiempo2;
+    }
 }
 
 bool BuscaCoorrdenadas::andar(){

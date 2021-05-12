@@ -46,7 +46,7 @@
         void begin();
         void loop();
         void getPos(Dimensions& dimensions);
-        void goTo(Dimensions& dimensions);
+        float goTo(Dimensions& dimensions);
         void goTo(long xPos, long yPos, float xSpeed, float ySpeed);
         void startMoving(float speedX, float speedY);
         void config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed);

@@ -14,7 +14,7 @@
     public:
         BuscaCoorrdenadas(Carrito *carrito1, Carrito *carrito2);
         ~BuscaCoorrdenadas();
-        void irHasta(long pos1, long pos2);
+        float irHasta(long pos1, long pos2);
         bool andar();
         long irHasta1();
         long irHasta2();

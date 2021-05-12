@@ -7,6 +7,7 @@
     {
         int32_t x;
         int32_t y;
+        float delay;
     };
 
     struct DimensionsFull
