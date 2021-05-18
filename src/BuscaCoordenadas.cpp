@@ -1,4 +1,5 @@
 #include <BuscaCoorrdenadas.h>
+#include <Dimensions.h>
 
 BuscaCoorrdenadas::BuscaCoorrdenadas(Carrito *carrito1, Carrito *carrito2)
 {
@@ -18,32 +19,10 @@ long BuscaCoorrdenadas::irHasta2(){
     return _irHasta2;
 }
 
-float BuscaCoorrdenadas::irHasta(long pos1, long pos2)
+void BuscaCoorrdenadas::irHasta(ViajeEstimado& estimacion)
 {
-    _irHasta1 = pos1;
-    _irHasta2 = pos2;
-
-    auto distancia1 = abs(_carrito1->getPos() - pos1);
-    auto distancia2 = abs(_carrito2->getPos() - pos2);
-
-    float velocidad1 = distancia2 > 0 ? (distancia1 * _carrito2->getMaxSpeed()) / distancia2 : _carrito1->getMaxSpeed();
-    float velocidad2 = distancia1 > 0 ? (distancia2 * _carrito1->getMaxSpeed()) / distancia1 : _carrito2->getMaxSpeed();
-    if(velocidad1 > _carrito1->getMaxSpeed()){
-        velocidad1 = _carrito1->getMaxSpeed();
-    } else {
-        velocidad2 = _carrito2->getMaxSpeed();
-    }
-
-    _carrito1->moveTo(pos1, velocidad1);
-    _carrito2->moveTo(pos2, velocidad2);
-    
-    auto tiempo1 = distancia1 / velocidad1; 
-    auto tiempo2 = distancia2 / velocidad2; 
-    if(tiempo1 > tiempo2){
-        return tiempo1;
-    } else {
-        return tiempo2;
-    }
+    _carrito1->moveTo(estimacion.x, estimacion.xVelocidad);
+    _carrito2->moveTo(estimacion.y, estimacion.yVelocidad);
 }
 
 bool BuscaCoorrdenadas::andar(){

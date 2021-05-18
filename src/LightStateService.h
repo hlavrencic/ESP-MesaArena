@@ -4,7 +4,7 @@
 
 #include <HttpEndpoint.h>
 #include <WebSocketTxRx.h>
-#include <MotorsController.h>
+#include <MotorsControllerCache.h>
 
 #define LED_PIN 2
 #define PRINT_DELAY 5000
@@ -74,14 +74,14 @@ class LightStateService : public StatefulService<LightState> {
  public:
   LightStateService(AsyncWebServer* server,
                     SecurityManager* securityManager,
-                    MotorsController* motorsController);
+                    MotorsControllerCache* motorsController);
   void begin();
 
  private:
   HttpEndpoint<LightState> _httpEndpoint;
   WebSocketTxRx<LightState> _webSocket;
   
-  MotorsController* _motorsController;
+  MotorsControllerCache* _motorsController;
 
   void registerConfig();
   void onConfigUpdated(const String& originId);

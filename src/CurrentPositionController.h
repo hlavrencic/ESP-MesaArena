@@ -33,11 +33,13 @@ class CurrentPositionController : public StatefulService<PositionStatus> {
  public:
   CurrentPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
-                    MotorsController* motorsController);
+                    MotorsController* motorsController,
+                    MotorsControllerCache* motorsControllerCache);
 
 
  private:
     MotorsController* _motorsController;
+    MotorsControllerCache* _motorsControllerCache;
 
     void getPos(AsyncWebServerRequest* request);
 };

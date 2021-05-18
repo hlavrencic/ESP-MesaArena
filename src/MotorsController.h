@@ -47,12 +47,16 @@
         void loop();
         void getPos(Dimensions& dimensions);
         void getNext(Dimensions& dimensions);
-        float goTo(Dimensions& dimensions);
+        ViajeActual getCurrent();
+        void goTo(ViajeEstimado& estimacion);
         void goTo(long xPos, long yPos, float xSpeed, float ySpeed);
         void startMoving(float speedX, float speedY);
         void config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed);
         MotorsControllerMode mode = MotorsControllerMode::CALIBRATING;
+        float getMaxSpeedX();
+        float getMaxSpeedY();
     private:
+        ViajeActual viajeActual;
         bool _enabled = true;
         bool _arrived = false;
         unsigned long _arrivedTick = 0;

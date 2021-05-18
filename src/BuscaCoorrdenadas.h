@@ -3,6 +3,7 @@
 
     #include <Arduino.h>
     #include <Carrito.h>
+    #include <Dimensions.h>
 
     class BuscaCoorrdenadas
     {
@@ -14,11 +15,10 @@
     public:
         BuscaCoorrdenadas(Carrito *carrito1, Carrito *carrito2);
         ~BuscaCoorrdenadas();
-        float irHasta(long pos1, long pos2);
+        void irHasta(ViajeEstimado& estimacion);
         bool andar();
         long irHasta1();
         long irHasta2();
     };
     
-
 #endif

@@ -8,11 +8,15 @@
     class MotorsControllerCache {
     public:
         MotorsControllerCache(MotorsController& _motorsController);
-        void goTo(Dimensions newPos);
+        ViajeActual goTo(Dimensions newPos);
         void loop();
+        float getTotalDelay();
     private:
+        Dimensions ultimaParada;
         MotorsController* motorsController;
-        std::list<Dimensions> cache;
+        std::list<ViajeEstimado> cache;
+        void estimarViaje(ViajeEstimado& estimado);
+        
     };
 
     

@@ -20,6 +20,19 @@
         float delay;
     };
 
+    struct ViajeEstimado : Dimensions
+    {
+        float xVelocidad;
+        float yVelocidad;
+    };
+
+    struct ViajeActual : ViajeEstimado
+    {
+        long xActual;
+        long yActual;
+        float delayTotal;
+    };
+
     struct DimensionsFull
     {
         const char* guid;

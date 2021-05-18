@@ -2,10 +2,12 @@
 
 CurrentPositionController::CurrentPositionController(AsyncWebServer* server,
                                      SecurityManager* securityManager,
-                                     MotorsController* motorsController) 
+                                     MotorsController* motorsController,
+                                     MotorsControllerCache* motorsControllerCache) 
 {
   
   _motorsController = motorsController;
+  _motorsControllerCache = motorsControllerCache;
 
   server->on(GET_POS_ENDPOINT_PATH,
              HTTP_GET,
@@ -14,20 +16,20 @@ CurrentPositionController::CurrentPositionController(AsyncWebServer* server,
 }
 
 void CurrentPositionController::getPos(AsyncWebServerRequest* request){
-  Dimensions pos;
-  Dimensions next;
-  _motorsController->getPos(pos);
-  _motorsController->getNext(next);
-
+  auto viajeActual = _motorsController->getCurrent();
   
   AsyncJsonResponse* response = new AsyncJsonResponse(false);
   JsonObject root = response->getRoot();
-  root["x"] = pos.x;
-  root["y"] = pos.y;
-  root["xNext"] = next.x;
-  root["yNext"] = next.y;
+  root["x"] = viajeActual.x;
+  root["y"] = viajeActual.y;
+  root["xActual"] = viajeActual.xActual;
+  root["yActual"] = viajeActual.yActual;
+  root["xVelocidad"] = viajeActual.xVelocidad;
+  root["yVelocidad"] = viajeActual.yVelocidad;
+  root["delay"] = viajeActual.delay;
   root["mode"] = _motorsController->mode;
-  
+  root["totalDelay"] = _motorsControllerCache->getTotalDelay();
+
   response->setLength();
   request->send(response);
 }

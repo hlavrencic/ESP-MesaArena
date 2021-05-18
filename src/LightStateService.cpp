@@ -1,8 +1,9 @@
 #include <LightStateService.h>
+#include <MotorsControllerCache.h>
 
 LightStateService::LightStateService(AsyncWebServer* server,
                                      SecurityManager* securityManager,
-                                     MotorsController* motorsController) :
+                                     MotorsControllerCache* motorsController) :
     _httpEndpoint(LightState::read,
                   LightState::update,
                   this,
@@ -35,5 +36,6 @@ void LightStateService::begin() {
 
 void LightStateService::onConfigUpdated(const String& originId) {
   if(originId.compareTo("A MANO") == 0) return; 
+
   _motorsController->goTo(*_state.nextPosition);  
 }

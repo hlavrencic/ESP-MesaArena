@@ -13,11 +13,12 @@ MotorsController motorsController;
 MotorsControllerCache motorsControllerCache(motorsController);
 LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
-                                                        &motorsController);
+                                                        &motorsControllerCache);
 
 CurrentPositionController currentPositionController = CurrentPositionController(&server,
                                                         esp8266React.getSecurityManager(),
-                                                        &motorsController);
+                                                        &motorsController,
+                                                        &motorsControllerCache);
 
 NextPositionController nextcontroller = NextPositionController(&server,
                                                         esp8266React.getSecurityManager(),
