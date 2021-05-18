@@ -65,8 +65,6 @@ ViajeActual MotorsControllerCache::goTo(Dimensions newPos){
     cache.push_back(viaje);
     viaje.delayTotal = getTotalDelay();
 
-    Serial.print("ultimaParada1->x: ") ; Serial.println(ultimaParada.x);
     ultimaParada = newPos;
-    Serial.print("ultimaParada2->x: ") ; Serial.println(ultimaParada.x);
     return viaje;
 };
