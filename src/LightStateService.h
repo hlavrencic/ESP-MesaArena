@@ -34,8 +34,6 @@ class LightState {
   Dimensions* nextPosition;
 
   static void read(LightState& settings, JsonObject& root) {
-    Serial.print("reading... "); 
-    
     root["led_on"] = settings.ledOn;
     root["brightness"] = settings.brigthness;
     root["arduinoPosition"]["x"] = settings.arduinoPosition->x;

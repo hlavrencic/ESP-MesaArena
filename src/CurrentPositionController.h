@@ -4,7 +4,7 @@
 
 #include <HttpEndpoint.h>
 #include <WebSocketTxRx.h>
-#include <MotorsController.h>
+#include <MotorsControllerCache.h>
 
 #define LED_PIN 2
 #define PRINT_DELAY 5000
@@ -29,27 +29,28 @@
 #define CONFIG_ENDPOINT_PATH "/rest/config"
 
 
-class CurrentPositionController : public StatefulService<Dimensions> {
+class CurrentPositionController : public StatefulService<PositionStatus> {
  public:
   CurrentPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
                     MotorsController* motorsController);
 
- private:
-  MotorsController* _motorsController;
 
-  void getPos(AsyncWebServerRequest* request);
+ private:
+    MotorsController* _motorsController;
+
+    void getPos(AsyncWebServerRequest* request);
 };
 
 class NextPositionController : public StatefulService<Dimensions> {
  public:
   NextPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
-                    MotorsController* motorsController);
+                    MotorsControllerCache* motorsController);
 
  private:
   HttpEndpoint<Dimensions> _httpEndpoint;
-  MotorsController* _motorsController;
+  MotorsControllerCache* _motorsController;
   
   static void read(Dimensions& model, JsonObject& root){
       root["x"] = model.x;

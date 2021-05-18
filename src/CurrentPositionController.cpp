@@ -15,12 +15,18 @@ CurrentPositionController::CurrentPositionController(AsyncWebServer* server,
 
 void CurrentPositionController::getPos(AsyncWebServerRequest* request){
   Dimensions pos;
+  Dimensions next;
   _motorsController->getPos(pos);
+  _motorsController->getNext(next);
+
   
   AsyncJsonResponse* response = new AsyncJsonResponse(false);
   JsonObject root = response->getRoot();
   root["x"] = pos.x;
   root["y"] = pos.y;
+  root["xNext"] = next.x;
+  root["yNext"] = next.y;
+  root["mode"] = _motorsController->mode;
   
   response->setLength();
   request->send(response);
@@ -28,7 +34,7 @@ void CurrentPositionController::getPos(AsyncWebServerRequest* request){
 
 NextPositionController::NextPositionController(AsyncWebServer* server,
                                      SecurityManager* securityManager,
-                                     MotorsController* motorsController) : 
+                                     MotorsControllerCache* motorsController) : 
     _httpEndpoint(NextPositionController::read,
                   NextPositionController::update,
                   this,
@@ -44,7 +50,7 @@ NextPositionController::NextPositionController(AsyncWebServer* server,
 }
 
 void NextPositionController::goTo(const String& originId){
-  _state.delay = _motorsController->goTo(_state);
+  _motorsController->goTo(_state);
 }
 
 NextPositionFullController::NextPositionFullController(AsyncWebServer* server,

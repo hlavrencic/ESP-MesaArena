@@ -1,13 +1,16 @@
 #include <ESP8266React.h>
 #include <MotorsController.h>
+#include <MotorsControllerCache.h>
 #include <LightStateService.h>
 #include <CurrentPositionController.h>
 
 #define SERIAL_BAUD_RATE 115200
 
+
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
 MotorsController motorsController;
+MotorsControllerCache motorsControllerCache(motorsController);
 LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
                                                         &motorsController);
@@ -18,7 +21,7 @@ CurrentPositionController currentPositionController = CurrentPositionController(
 
 NextPositionController nextcontroller = NextPositionController(&server,
                                                         esp8266React.getSecurityManager(),
-                                                        &motorsController);
+                                                        &motorsControllerCache);
 
 NextPositionFullController nextPositionFullcontroller = NextPositionFullController(&server,
                                                         esp8266React.getSecurityManager(),
@@ -50,7 +53,7 @@ void loop() {
   // run the framework's loop function
   esp8266React.loop();
   
-  motorsController.loop();
+  motorsControllerCache.loop();
 
   if(lastUpdate + 1000 < millis()){
     lastUpdate = millis();

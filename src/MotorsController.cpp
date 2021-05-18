@@ -25,8 +25,13 @@ void MotorsController::getPos(Dimensions& dimensions){
     dimensions.y = stepper2.currentPosition();
 }
 
+void MotorsController::getNext(Dimensions& dimensions){
+    dimensions.x = stepper.targetPosition();
+    dimensions.y = stepper2.targetPosition();
+}
+
 float MotorsController::goTo(Dimensions& dimensions){
-    if(mode != MotorsControllerMode::STANDBY) return;
+    if(mode != MotorsControllerMode::STANDBY) return 0;
     mode = MotorsControllerMode::TRAVELLING;
     
     return buscaCoorrdenadas.irHasta(dimensions.x, dimensions.y);

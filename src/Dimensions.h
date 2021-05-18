@@ -3,6 +3,16 @@
 
     #include <Arduino.h>
 
+    struct PositionStatus
+    {
+        unsigned long x;
+        unsigned long y;
+        float delay;
+        byte mode;
+        unsigned long xNext;
+        unsigned long yNext;
+    };
+
     struct Dimensions
     {
         int32_t x;

@@ -20,18 +20,18 @@
         const byte end1Pin = GPIO_NUM_33;
         const byte end2Pin = GPIO_NUM_27  ;
     #else  
-        const byte motor1Pin1 = 0;  
-        const byte motor1Pin2 = 0;  
-        const byte motor1Pin3 = 0; 
-        const byte motor1Pin4 = 0; 
+        const byte motor1Pin1 = D1;  
+        const byte motor1Pin2 = D2;  
+        const byte motor1Pin3 = D3; 
+        const byte motor1Pin4 = D4; 
 
-        const byte motor2Pin1 = 3;      // IN1 on the ULN2003 driver
-        const byte motor2Pin2 = 4;      // IN2 on the ULN2003 driver
-        const byte motor2Pin3 = 5;     // IN3 on the ULN2003 driver
-        const byte motor2Pin4 = 6;     // IN4 on the ULN2003 driver
+        const byte motor2Pin1 = D5;      // IN1 on the ULN2003 driver
+        const byte motor2Pin2 = D6;      // IN2 on the ULN2003 driver
+        const byte motor2Pin3 = D7;     // IN3 on the ULN2003 driver
+        const byte motor2Pin4 = D8;     // IN4 on the ULN2003 driver
 
-        const byte end1Pin = 10;
-        const byte end2Pin = 11;
+        const byte end1Pin = A0;
+        const byte end2Pin = A0;
     #endif
 
     enum MotorsControllerMode {
@@ -46,6 +46,7 @@
         void begin();
         void loop();
         void getPos(Dimensions& dimensions);
+        void getNext(Dimensions& dimensions);
         float goTo(Dimensions& dimensions);
         void goTo(long xPos, long yPos, float xSpeed, float ySpeed);
         void startMoving(float speedX, float speedY);
