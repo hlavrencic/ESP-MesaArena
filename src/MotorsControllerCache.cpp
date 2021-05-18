@@ -14,8 +14,13 @@ void MotorsControllerCache::loop(){
         auto newPos = cache.front();
         motorsController->goTo(newPos);
         cache.pop_front();
+        queueLength--;
     }
 };
+
+u_short MotorsControllerCache::getQueueLength(){
+    return queueLength;
+}
 
 void MotorsControllerCache::estimarViaje(ViajeEstimado& estimado){
 
@@ -63,6 +68,7 @@ ViajeActual MotorsControllerCache::goTo(Dimensions newPos){
     viaje.delay = newPos.delay;
     estimarViaje(viaje);
     cache.push_back(viaje);
+    queueLength++;
     viaje.delayTotal = getTotalDelay();
 
     ultimaParada = newPos;

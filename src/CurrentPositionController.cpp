@@ -20,15 +20,10 @@ void CurrentPositionController::getPos(AsyncWebServerRequest* request){
   
   AsyncJsonResponse* response = new AsyncJsonResponse(false);
   JsonObject root = response->getRoot();
-  root["x"] = viajeActual.x;
-  root["y"] = viajeActual.y;
-  root["xActual"] = viajeActual.xActual;
-  root["yActual"] = viajeActual.yActual;
-  root["xVelocidad"] = viajeActual.xVelocidad;
-  root["yVelocidad"] = viajeActual.yVelocidad;
-  root["delay"] = viajeActual.delay;
+  NextPositionController::read(viajeActual, root);
   root["mode"] = _motorsController->mode;
   root["totalDelay"] = _motorsControllerCache->getTotalDelay();
+  root["queueLength"] = _motorsControllerCache->getQueueLength();
 
   response->setLength();
   request->send(response);
@@ -52,7 +47,7 @@ NextPositionController::NextPositionController(AsyncWebServer* server,
 }
 
 void NextPositionController::goTo(const String& originId){
-  _motorsController->goTo(_state);
+  _state = _motorsController->goTo(_state);
 }
 
 NextPositionFullController::NextPositionFullController(AsyncWebServer* server,

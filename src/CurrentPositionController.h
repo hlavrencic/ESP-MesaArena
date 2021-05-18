@@ -44,25 +44,29 @@ class CurrentPositionController : public StatefulService<PositionStatus> {
     void getPos(AsyncWebServerRequest* request);
 };
 
-class NextPositionController : public StatefulService<Dimensions> {
+class NextPositionController : public StatefulService<ViajeActual> {
  public:
   NextPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
                     MotorsControllerCache* motorsController);
-
+                    
+    static void read(ViajeActual& model, JsonObject& root){
+        root["x"] = model.x;
+        root["y"] = model.y;
+        root["xActual"] = model.xActual;
+        root["yActual"] = model.yActual;
+        root["xVelocidad"] = model.xVelocidad;
+        root["yVelocidad"] = model.yVelocidad;
+        root["delay"] = model.delay;
+    }
  private:
-  HttpEndpoint<Dimensions> _httpEndpoint;
+  HttpEndpoint<ViajeActual> _httpEndpoint;
   MotorsControllerCache* _motorsController;
   
-  static void read(Dimensions& model, JsonObject& root){
-      root["x"] = model.x;
-      root["y"] = model.y;
-      root["delay"] = model.delay;
-  }
-
-  static StateUpdateResult update(JsonObject& root, Dimensions& model){
+  static StateUpdateResult update(JsonObject& root, ViajeActual& model){
       model.x = root["x"];
       model.y = root["y"];
+      model.delay = root["delay"];
 
       return StateUpdateResult::CHANGED;
   }

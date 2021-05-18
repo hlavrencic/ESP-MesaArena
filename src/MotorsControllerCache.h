@@ -11,7 +11,9 @@
         ViajeActual goTo(Dimensions newPos);
         void loop();
         float getTotalDelay();
+        u_short getQueueLength();
     private:
+        u_short queueLength;
         Dimensions ultimaParada;
         MotorsController* motorsController;
         std::list<ViajeEstimado> cache;
