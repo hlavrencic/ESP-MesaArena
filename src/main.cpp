@@ -13,6 +13,7 @@ MotorsController motorsController;
 MotorsControllerCache motorsControllerCache(motorsController);
 LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
+                                                        &motorsController,
                                                         &motorsControllerCache);
 
 CurrentPositionController currentPositionController = CurrentPositionController(&server,
@@ -23,10 +24,6 @@ CurrentPositionController currentPositionController = CurrentPositionController(
 NextPositionController nextcontroller = NextPositionController(&server,
                                                         esp8266React.getSecurityManager(),
                                                         &motorsControllerCache);
-
-NextPositionFullController nextPositionFullcontroller = NextPositionFullController(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        &motorsController); 
 
 MotorsConfigController motorsConfigController = MotorsConfigController(&server,
                                                         esp8266React.getSecurityManager(),
@@ -48,34 +45,11 @@ void setup() {
   motorsController.begin();
 }
 
-unsigned long lastUpdate;
-
 void loop() {
   // run the framework's loop function
   esp8266React.loop();
   
   motorsControllerCache.loop();
 
-  if(lastUpdate + 1000 < millis()){
-    lastUpdate = millis();
-    
-    if(motorsController.mode == MotorsControllerMode::ERROR){
-      Serial.println("ERROR");
-    } else {
-      lightStateService.update([&](LightState& newState){
-
-        Dimensions pos;
-        motorsController.getPos(pos);
-
-        if(newState.arduinoPosition->x != pos.x || newState.arduinoPosition->y != pos.y){
-          newState.arduinoPosition->x = pos.x;
-          newState.arduinoPosition->y = pos.y;
-          return StateUpdateResult::CHANGED;
-        }
-
-        return StateUpdateResult::UNCHANGED;
-        
-      }, "A MANO");
-    }
-  }
+  lightStateService.loop();
 }

@@ -22,7 +22,6 @@ void CurrentPositionController::getPos(AsyncWebServerRequest* request){
   JsonObject root = response->getRoot();
   NextPositionController::read(viajeActual, root);
   root["mode"] = _motorsController->mode;
-  root["totalDelay"] = _motorsControllerCache->getTotalDelay();
   root["queueLength"] = _motorsControllerCache->getQueueLength();
 
   response->setLength();
@@ -48,27 +47,6 @@ NextPositionController::NextPositionController(AsyncWebServer* server,
 
 void NextPositionController::goTo(const String& originId){
   _state = _motorsController->goTo(_state);
-}
-
-NextPositionFullController::NextPositionFullController(AsyncWebServer* server,
-                                     SecurityManager* securityManager,
-                                     MotorsController* motorsController) : 
-    _httpEndpoint(NextPositionFullController::read,
-                  NextPositionFullController::update,
-                  this,
-                  server,
-                  GO_TO_SPEED_ENDPOINT_PATH,
-                  securityManager,
-                  AuthenticationPredicates::IS_AUTHENTICATED)                                     
-{
-  
-  _motorsController = motorsController;
-
-  addUpdateHandler([&](const String& originId) { goTo(originId); }, false);
-}
-
-void NextPositionFullController::goTo(const String& originId){
-  _motorsController->goTo(_state.xPos, _state.yPos, _state.xSpeed, _state.ySpeed );
 }
 
 MotorsConfigController::MotorsConfigController(AsyncWebServer* server,

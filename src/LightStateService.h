@@ -74,18 +74,21 @@ class LightStateService : public StatefulService<LightState> {
  public:
   LightStateService(AsyncWebServer* server,
                     SecurityManager* securityManager,
-                    MotorsControllerCache* motorsController);
+                    MotorsController* motorsController,
+                    MotorsControllerCache* motorsControllerCache);
   void begin();
+  void loop();
 
  private:
   HttpEndpoint<LightState> _httpEndpoint;
   WebSocketTxRx<LightState> _webSocket;
   
-  MotorsControllerCache* _motorsController;
+  MotorsController* _motorsController;
+  MotorsControllerCache* _motorsControllerCache;
 
   void registerConfig();
   void onConfigUpdated(const String& originId);
-  
+  unsigned long lastUpdate;
 };
 
 #endif

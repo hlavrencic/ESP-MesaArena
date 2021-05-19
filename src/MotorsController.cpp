@@ -28,16 +28,6 @@ float MotorsController::getMaxSpeedY(){
     return stepper2.maxSpeed();
 }
 
-void MotorsController::getPos(Dimensions& dimensions){
-    dimensions.x = stepper.currentPosition();
-    dimensions.y = stepper2.currentPosition();
-}
-
-void MotorsController::getNext(Dimensions& dimensions){
-    dimensions.x = stepper.targetPosition();
-    dimensions.y = stepper2.targetPosition();
-}
-
 ViajeActual MotorsController::getCurrent(){
     viajeActual.xActual = stepper.currentPosition();
     viajeActual.yActual = stepper2.currentPosition();
@@ -48,22 +38,7 @@ void MotorsController::goTo(ViajeEstimado& estimacion){
     if(estimacion.xVelocidad == 0 && estimacion.yVelocidad == 0) return;
     if(mode != MotorsControllerMode::STANDBY) return;
     mode = MotorsControllerMode::TRAVELLING;
-    
-    Serial.print("estimacion.xVelocidad"); Serial.println(estimacion.xVelocidad);
     buscaCoorrdenadas.irHasta(estimacion);
-
-    viajeActual.x = estimacion.x;
-    viajeActual.y = estimacion.y;
-    viajeActual.xVelocidad = estimacion.xVelocidad;
-    viajeActual.yVelocidad = estimacion.yVelocidad;
-    viajeActual.delay = estimacion.delay;    
-}
-
-void MotorsController::goTo(long xPos, long yPos, float xSpeed, float ySpeed){
-    if(mode != MotorsControllerMode::STANDBY) return;
-    mode = MotorsControllerMode::TRAVELLING;
-    carrito1->moveTo(xPos, xSpeed);
-    carrito2->moveTo(yPos, ySpeed);
 }
 
 void MotorsController::loop(){
@@ -102,11 +77,6 @@ void MotorsController::loop(){
         break;
     }
     
-}
-
-void MotorsController::startMoving(float speedX, float speedY){
-    carrito1->setSpeed(speedX);
-    carrito2->setSpeed(speedY);
 }
 
 void MotorsController::enableMotors(bool state){

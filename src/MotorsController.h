@@ -45,12 +45,8 @@
     public:
         void begin();
         void loop();
-        void getPos(Dimensions& dimensions);
-        void getNext(Dimensions& dimensions);
         ViajeActual getCurrent();
         void goTo(ViajeEstimado& estimacion);
-        void goTo(long xPos, long yPos, float xSpeed, float ySpeed);
-        void startMoving(float speedX, float speedY);
         void config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed);
         MotorsControllerMode mode = MotorsControllerMode::CALIBRATING;
         float getMaxSpeedX();
@@ -66,7 +62,7 @@
         Carrito* carrito2 = new Carrito(&stepper2, 35000U, false, end2Pin);
 
         BuscaCoorrdenadas buscaCoorrdenadas = BuscaCoorrdenadas(carrito1, carrito2);
-
+        
         void enableMotors(bool state);
     };
     

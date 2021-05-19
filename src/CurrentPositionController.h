@@ -49,7 +49,7 @@ class NextPositionController : public StatefulService<ViajeActual> {
   NextPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
                     MotorsControllerCache* motorsController);
-                    
+
     static void read(ViajeActual& model, JsonObject& root){
         root["x"] = model.x;
         root["y"] = model.y;
@@ -58,6 +58,7 @@ class NextPositionController : public StatefulService<ViajeActual> {
         root["xVelocidad"] = model.xVelocidad;
         root["yVelocidad"] = model.yVelocidad;
         root["delay"] = model.delay;
+        root["delayTotal"] = model.delayTotal;
     }
  private:
   HttpEndpoint<ViajeActual> _httpEndpoint;
@@ -67,37 +68,9 @@ class NextPositionController : public StatefulService<ViajeActual> {
       model.x = root["x"];
       model.y = root["y"];
       model.delay = root["delay"];
+      model.xVelocidad = root["xVelocidad"];
+      model.yVelocidad = root["yVelocidad"];
 
-      return StateUpdateResult::CHANGED;
-  }
-
-  void goTo(const String& originId);
-};
-
-class NextPositionFullController : public StatefulService<DimensionsFull> {
- public:
-  NextPositionFullController(AsyncWebServer* server,
-                    SecurityManager* securityManager,
-                    MotorsController* motorsController);
-
- private:
-  HttpEndpoint<DimensionsFull> _httpEndpoint;
-  MotorsController* _motorsController;
-  
-  static void read(DimensionsFull& model, JsonObject& root){
-      root["guid"] = model.guid;
-      root["x"] = model.xPos;
-      root["y"] = model.yPos;
-      root["xSpeed"] = model.xSpeed;
-      root["ySpeed"] = model.ySpeed;
-  }
-
-  static StateUpdateResult update(JsonObject& root, DimensionsFull& model){
-      model.guid = root["guid"];
-      model.xPos = root["x"];
-      model.yPos = root["y"];
-      model.xSpeed = root["xSpeed"];
-      model.ySpeed = root["ySpeed"];
       return StateUpdateResult::CHANGED;
   }
 
