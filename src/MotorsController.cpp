@@ -34,6 +34,12 @@ ViajeActual MotorsController::getCurrent(){
     return viajeActual;
 }
 
+void MotorsController::setCurrentPosition(long xPos, long yPos){
+    stepper.setCurrentPosition(xPos);
+    stepper2.setCurrentPosition(yPos);
+    mode = MotorsControllerMode::STANDBY;
+}
+
 void MotorsController::goTo(ViajeEstimado& estimacion){
     if(estimacion.xVelocidad == 0 && estimacion.yVelocidad == 0) return;
     if(mode != MotorsControllerMode::STANDBY) return;

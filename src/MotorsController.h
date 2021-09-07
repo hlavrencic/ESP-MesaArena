@@ -46,6 +46,7 @@
         void begin();
         void loop();
         ViajeActual getCurrent();
+        void setCurrentPosition(long xPos, long yPos);
         void goTo(ViajeEstimado& estimacion);
         void config(unsigned int xMax, unsigned int yMax, float xMaxSpeed, float yMaxSpeed);
         MotorsControllerMode mode = MotorsControllerMode::CALIBRATING;

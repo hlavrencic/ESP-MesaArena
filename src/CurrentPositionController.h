@@ -23,13 +23,14 @@
 #define LED_OFF 0x1
 #endif
 
+#define CURRENT_POSITION_ENDPOINT_PATH "/rest/CurrentPosition"
 #define GET_POS_ENDPOINT_PATH "/rest/getPos"
 #define GO_TO_ENDPOINT_PATH "/rest/goTo"
 #define GO_TO_SPEED_ENDPOINT_PATH "/rest/goToSpeed"
 #define CONFIG_ENDPOINT_PATH "/rest/config"
 
 
-class CurrentPositionController : public StatefulService<PositionStatus> {
+class CurrentPositionController {
  public:
   CurrentPositionController(AsyncWebServer* server,
                     SecurityManager* securityManager,
@@ -38,10 +39,15 @@ class CurrentPositionController : public StatefulService<PositionStatus> {
 
 
  private:
+    
+    AsyncCallbackJsonWebHandler _postHandler;
     MotorsController* _motorsController;
     MotorsControllerCache* _motorsControllerCache;
 
     void getPos(AsyncWebServerRequest* request);
+
+    void setPos(AsyncWebServerRequest* request, JsonVariant& json);
+
 };
 
 class NextPositionController : public StatefulService<ViajeActual> {
