@@ -1,6 +1,5 @@
 #include <ESP8266React.h>
-#include <MotorsController.h>
-#include <MotorsControllerCache.h>
+#include <Services/MotorsControllerCache.h>
 #include <LightStateService.h>
 #include <Controllers/ControllersLoader.h>
 

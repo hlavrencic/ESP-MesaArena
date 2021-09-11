@@ -1,5 +1,4 @@
 #include <LightStateService.h>
-#include <MotorsControllerCache.h>
 
 LightStateService::LightStateService(AsyncWebServer* server,
                                      SecurityManager* securityManager,

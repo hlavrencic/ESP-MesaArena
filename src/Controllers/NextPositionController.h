@@ -2,7 +2,7 @@
     #define NextPositionController_H
 
     #include <HttpEndpoint.h>
-    #include <MotorsControllerCache.h>
+    #include <Services/MotorsControllerCache.h>
 
     #define GO_TO_ENDPOINT_PATH "/rest/goTo"
 

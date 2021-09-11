@@ -2,7 +2,7 @@
     #define MotorsConfigController_H
 
     #include <HttpEndpoint.h>
-    #include <MotorsController.h>
+    #include <Services/MotorsController.h>
 
     #define CONFIG_ENDPOINT_PATH "/rest/config"
     

@@ -2,8 +2,8 @@
     #define MotorController_H
 
     #include <AccelStepper.h>
-    #include <BuscaCoorrdenadas.h>
-    #include <Dimensions.h>
+    #include <Services/BuscaCoorrdenadas.h>
+    #include <Services/Dimensions.h>
 
     #ifdef ESP32
         //include ESP32 specific libs
