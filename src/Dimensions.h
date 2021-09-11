@@ -42,12 +42,4 @@
         float ySpeed;
     };
 
-    struct MotorsConfig
-    {
-        uint xMax;
-        uint yMax;
-        float xMaxSpeed;
-        float yMaxSpeed;
-    };
-
 #endif

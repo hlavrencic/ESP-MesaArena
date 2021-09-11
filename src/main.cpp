@@ -3,6 +3,8 @@
 #include <MotorsControllerCache.h>
 #include <LightStateService.h>
 #include <CurrentPositionController.h>
+#include <NextPositionController.h>
+#include <MotorsConfigController.h>
 
 #define SERIAL_BAUD_RATE 115200
 
