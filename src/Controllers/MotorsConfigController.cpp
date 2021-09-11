@@ -1,4 +1,4 @@
-#include <MotorsConfigController.h>
+#include <Controllers/MotorsConfigController.h>
 
 MotorsConfigController::MotorsConfigController(AsyncWebServer* server,
                                      SecurityManager* securityManager,

@@ -1,5 +1,5 @@
-#include <CurrentPositionController.h>
-#include <NextPositionController.h>
+#include <Controllers/CurrentPositionController.h>
+#include <Controllers/NextPositionController.h>
 
 CurrentPositionController::CurrentPositionController(
   AsyncWebServer* server,

@@ -2,9 +2,8 @@
 #include <MotorsController.h>
 #include <MotorsControllerCache.h>
 #include <LightStateService.h>
-#include <CurrentPositionController.h>
-#include <NextPositionController.h>
-#include <MotorsConfigController.h>
+#include <Controllers/ControllersLoader.h>
+
 
 #define SERIAL_BAUD_RATE 115200
 
@@ -18,18 +17,7 @@ LightStateService lightStateService = LightStateService(&server,
                                                         &motorsController,
                                                         &motorsControllerCache);
 
-CurrentPositionController currentPositionController = CurrentPositionController(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        &motorsController,
-                                                        &motorsControllerCache);
-
-NextPositionController nextcontroller = NextPositionController(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        &motorsControllerCache);
-
-MotorsConfigController motorsConfigController = MotorsConfigController(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        &motorsController);                                                  
+ControllersLoader controllersLoader(&server, &esp8266React, &motorsController, &motorsControllerCache);                                          
 
 void setup() {
   // start serial and filesystem
@@ -45,6 +33,8 @@ void setup() {
   server.begin();
 
   motorsController.begin();
+
+  controllersLoader.begin();
 }
 
 void loop() {
@@ -54,4 +44,6 @@ void loop() {
   motorsControllerCache.loop();
 
   lightStateService.loop();
+
+  controllersLoader.loop();
 }
