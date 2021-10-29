@@ -4,6 +4,12 @@ export interface Dimensions {
 }
   
 export class SvgService {
+    static loadContent(svgContent: string, svgContainer: HTMLElement){
+      let svgService = new SvgService(svgContainer);
+      svgService.onloadEnd(svgContent);
+      return svgService;
+    }
+
     static async load(file: File, svgContainer: HTMLElement) {
       if (!file) {
         return;
@@ -14,12 +20,11 @@ export class SvgService {
       }
   
       let fileReader = new FileReader();
-      let svgService = new SvgService(svgContainer);
   
       return await new Promise<SvgService>((resolve, reject) => {
         fileReader.onloadend = () => {
           let result = fileReader.result as string;
-          svgService.onloadEnd(result);
+          let svgService = SvgService.loadContent(result, svgContainer);
           resolve(svgService);
         };
   
