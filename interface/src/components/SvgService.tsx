@@ -1,3 +1,5 @@
+import internal from "stream";
+
 export interface Dimensions {
     x: number;
     y: number;
@@ -6,7 +8,7 @@ export interface Dimensions {
 export class SvgService {
     static loadContent(svgContent: string, svgContainer: HTMLElement){
       let svgService = new SvgService(svgContainer);
-      svgService.onloadEnd(svgContent);
+      svgService.loadXML(svgContent);
       return svgService;
     }
 
@@ -41,7 +43,7 @@ export class SvgService {
     }
   
     private path: SVGPathElement | undefined;
-    private bBox: DOMRect | undefined;
+    private bBox: {width: number, height: number, x: number, y:number} | undefined;
     private circle: SVGCircleElement | undefined;
     private stepSize: number | undefined;
     private precision: number = 1000;
@@ -85,6 +87,40 @@ export class SvgService {
       }
     }
   
+    loadXML(data: string){
+      let self = this;
+  
+      let container = self.svgContainer;
+      container.innerHTML = data;
+      let svg1 = container.getElementsByTagName("svg")[0];
+      let path = svg1.getElementsByTagName("path")[0];
+      let bBox = { width: +svg1.width.animVal.value, height: +svg1.height.animVal.value, x:0, y:0 };
+  
+      self.remoteAttributes(svg1);
+      let viewBoxValue = " 0 0 " + bBox.width + " " + bBox.height;
+      svg1.setAttribute("viewBox", viewBoxValue);
+  
+      // create a circle
+      let circle = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+  
+      let circleRatio = (bBox.width + bBox.height) / 100;
+      circle.setAttribute("r", circleRatio.toString());
+      circle.setAttribute("fill", "red");
+  
+      // attach it to the container
+      svg1.appendChild(circle);
+  
+      self.circle = circle;
+      self.path = path;
+      self.stepSize = path.getTotalLength() / self.precision;
+      self.maxMoment = path.getTotalLength();
+      self.moment = 0;
+      self.bBox = bBox;
+    }
+
     onloadEnd(result: string) {
       let self = this;
   
