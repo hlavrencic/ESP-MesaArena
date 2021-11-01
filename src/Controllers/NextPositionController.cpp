@@ -35,6 +35,7 @@ void NextPositionController::getPos(AsyncWebServerRequest* request){
 
   response->setLength();
   request->send(response);
+  root.clear();
 }
 
 void NextPositionController::goTo(AsyncWebServerRequest* request, JsonVariant& json){
@@ -47,6 +48,12 @@ void NextPositionController::goTo(AsyncWebServerRequest* request, JsonVariant& j
   auto viajeActual = _motorsControllerCache->goTo(dimensions);
   Serial.println(viajeActual.xVelocidad);
   
-  AsyncWebServerResponse* response = request->beginResponse(200);
+  AsyncJsonResponse* response = new AsyncJsonResponse(false);
+  JsonObject root = response->getRoot();
+  NextPositionController::read(viajeActual, root);
+  root["queueLength"] = _motorsControllerCache->getQueueLength();
+  
+  response->setLength();
   request->send(response);
+  root.clear();
 }
