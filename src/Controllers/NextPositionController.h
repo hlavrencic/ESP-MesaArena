@@ -6,11 +6,12 @@
 
     #define GO_TO_ENDPOINT_PATH "/rest/goTo"
 
-    class NextPositionController : public StatefulService<ViajeActual> {
+    class NextPositionController {
     public:
-    NextPositionController(AsyncWebServer* server,
+        NextPositionController(AsyncWebServer* server,
                         SecurityManager* securityManager,
-                        MotorsControllerCache* motorsController);
+                        MotorsController* motorsController,
+                        MotorsControllerCache* motorsControllerCache);
 
         static void read(ViajeActual& model, JsonObject& root){
             root["x"] = model.x;
@@ -23,20 +24,23 @@
             root["delayTotal"] = model.delayTotal;
         }
     private:
-    HttpEndpoint<ViajeActual> _httpEndpoint;
-    MotorsControllerCache* _motorsController;
-    
-    static StateUpdateResult update(JsonObject& root, ViajeActual& model){
-        model.x = root["x"];
-        model.y = root["y"];
-        model.delay = root["delay"];
-        model.xVelocidad = root["xVelocidad"];
-        model.yVelocidad = root["yVelocidad"];
+        AsyncCallbackJsonWebHandler _postHandler;
+        MotorsController* _motorsController;
+        MotorsControllerCache* _motorsControllerCache;
+        
+        static StateUpdateResult update(JsonObject& root, ViajeActual& model){
+            model.x = root["x"];
+            model.y = root["y"];
+            model.delay = root["delay"];
+            model.xVelocidad = root["xVelocidad"];
+            model.yVelocidad = root["yVelocidad"];
 
-        return StateUpdateResult::CHANGED;
-    }
+            return StateUpdateResult::CHANGED;
+        }
 
-    void goTo(const String& originId);
+        void getPos(AsyncWebServerRequest* request);
+
+        void goTo(AsyncWebServerRequest* request, JsonVariant& json);
     };
 #endif
 

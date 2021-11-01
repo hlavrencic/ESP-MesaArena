@@ -1,33 +1,49 @@
 #include <Controllers/NextPositionController.h>
 
 NextPositionController::NextPositionController(AsyncWebServer* server,
-                                     SecurityManager* securityManager,
-                                     MotorsControllerCache* motorsController) : 
-    _httpEndpoint(NextPositionController::read,
-                  NextPositionController::update,
-                  this,
-                  server,
-                  GO_TO_ENDPOINT_PATH,
-                  securityManager,
-                  AuthenticationPredicates::IS_AUTHENTICATED)                                     
+    SecurityManager* securityManager,
+    MotorsController* motorsController,
+    MotorsControllerCache* motorsControllerCache) : 
+    _postHandler(GO_TO_ENDPOINT_PATH,
+                 securityManager->wrapCallback(
+                     std::bind(&NextPositionController::goTo, this, std::placeholders::_1, std::placeholders::_2),
+                     AuthenticationPredicates::IS_AUTHENTICATED))                                                     
 {
   
   _motorsController = motorsController;
+  _motorsControllerCache = motorsControllerCache;
 
-  addUpdateHandler([&](const String& originId) { goTo(originId); }, false);
+  server->on(GO_TO_ENDPOINT_PATH,
+             HTTP_GET,
+             securityManager->wrapRequest(std::bind(&NextPositionController::getPos, this, std::placeholders::_1),
+                                          AuthenticationPredicates::NONE_REQUIRED));
+
+  _postHandler.setMethod(HTTP_POST);
+  _postHandler.setMaxContentLength(256);
+  server->addHandler(&_postHandler);
 }
 
-void NextPositionController::goTo(const String& originId){
-  auto newState = _motorsController->goTo(_state);
-  _state.x = newState.x;
-  _state.y = newState.y;
-  _state.xActual = newState.xActual;
-  _state.yActual = newState.yActual;
-  _state.delay = newState.delay;
-  _state.delayTotal = newState.delayTotal;
-  _state.xVelocidad = newState.xVelocidad;
-  _state.yVelocidad = newState.yVelocidad;
+void NextPositionController::getPos(AsyncWebServerRequest* request){
+  auto viajeActual = _motorsController->getCurrent();
+  
+  AsyncJsonResponse* response = new AsyncJsonResponse(false);
+  JsonObject root = response->getRoot();
+  NextPositionController::read(viajeActual, root);
+  root["mode"] = _motorsController->mode;
+  root["queueLength"] = _motorsControllerCache->getQueueLength();
 
-  Serial.println(newState.xVelocidad);
-  Serial.println(_state.xVelocidad);
+  response->setLength();
+  request->send(response);
+}
+
+void NextPositionController::goTo(AsyncWebServerRequest* request, JsonVariant& json){
+  Dimensions dimensions;
+  dimensions.x = json['x'];
+  dimensions.y = json['y'];
+
+  auto viajeActual = _motorsControllerCache->goTo(dimensions);
+  Serial.println(viajeActual.xVelocidad);
+  
+  AsyncWebServerResponse* response = request->beginResponse(200);
+  request->send(response);
 }
