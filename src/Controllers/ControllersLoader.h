@@ -9,7 +9,7 @@
     class ControllersLoader {
         public:
             ControllersLoader(AsyncWebServer* server, ESP8266React* esp8266React, MotorsController* motorsController, MotorsControllerCache* motorsControllerCache) :
-            _currentPositionController(server, esp8266React->getSecurityManager(), motorsController, motorsControllerCache),
+            _currentPositionController(server, esp8266React->getSecurityManager(), motorsController),
             _nextPositionController(server, esp8266React->getSecurityManager(), motorsController, motorsControllerCache),
             _motorsConfigController(server, esp8266React->getSecurityManager(), motorsController) {
 
