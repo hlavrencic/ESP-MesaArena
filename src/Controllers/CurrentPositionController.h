@@ -1,5 +1,5 @@
 #ifndef CurrentPositionController_h
-#define CurrentPositionController_h
+    #define CurrentPositionController_h
 
     #include <HttpEndpoint.h>
     #include <Services/MotorsController.h>
