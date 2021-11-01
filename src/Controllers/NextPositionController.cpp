@@ -1,9 +1,10 @@
 #include <Controllers/NextPositionController.h>
 
-NextPositionController::NextPositionController(AsyncWebServer* server,
-    SecurityManager* securityManager,
-    MotorsController* motorsController,
-    MotorsControllerCache* motorsControllerCache) : 
+NextPositionController::NextPositionController(
+  AsyncWebServer* server,
+  SecurityManager* securityManager,
+  MotorsController* motorsController,
+  MotorsControllerCache* motorsControllerCache) : 
     _postHandler(GO_TO_ENDPOINT_PATH,
                  securityManager->wrapCallback(
                      std::bind(&NextPositionController::goTo, this, std::placeholders::_1, std::placeholders::_2),
@@ -34,16 +35,25 @@ void NextPositionController::getPos(AsyncWebServerRequest* request){
 
   response->setLength();
   request->send(response);
+  root.clear();
 }
 
 void NextPositionController::goTo(AsyncWebServerRequest* request, JsonVariant& json){
+
   Dimensions dimensions;
-  dimensions.x = json['x'];
-  dimensions.y = json['y'];
+  dimensions.x = json["x"];
+  dimensions.y = json["y"];
+  json.clear();
 
   auto viajeActual = _motorsControllerCache->goTo(dimensions);
   Serial.println(viajeActual.xVelocidad);
   
-  AsyncWebServerResponse* response = request->beginResponse(200);
+  AsyncJsonResponse* response = new AsyncJsonResponse(false);
+  JsonObject root = response->getRoot();
+  NextPositionController::read(viajeActual, root);
+  root["queueLength"] = _motorsControllerCache->getQueueLength();
+  
+  response->setLength();
   request->send(response);
+  root.clear();
 }

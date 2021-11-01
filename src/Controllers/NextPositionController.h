@@ -28,16 +28,6 @@
         MotorsController* _motorsController;
         MotorsControllerCache* _motorsControllerCache;
         
-        static StateUpdateResult update(JsonObject& root, ViajeActual& model){
-            model.x = root["x"];
-            model.y = root["y"];
-            model.delay = root["delay"];
-            model.xVelocidad = root["xVelocidad"];
-            model.yVelocidad = root["yVelocidad"];
-
-            return StateUpdateResult::CHANGED;
-        }
-
         void getPos(AsyncWebServerRequest* request);
 
         void goTo(AsyncWebServerRequest* request, JsonVariant& json);
