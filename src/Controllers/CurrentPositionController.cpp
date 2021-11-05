@@ -1,48 +1,26 @@
 #include <Controllers/CurrentPositionController.h>
-#include <Controllers/NextPositionController.h>
 
 CurrentPositionController::CurrentPositionController(
   AsyncWebServer* server,
   SecurityManager* securityManager,
-  MotorsController* motorsController,
-  MotorsControllerCache* motorsControllerCache) :
-  _postHandler(CURRENT_POSITION_ENDPOINT_PATH,
-                 securityManager->wrapCallback(
-                     std::bind(&CurrentPositionController::setPos, this, std::placeholders::_1, std::placeholders::_2),
-                     AuthenticationPredicates::IS_ADMIN))  
+  MotorsController* motorsController) :
+    _httpEndpoint(
+      CurrentPositionController::read,
+      CurrentPositionController::update,
+      this,
+      server,
+      CURRENT_POSITION_ENDPOINT_PATH,
+      securityManager,
+      AuthenticationPredicates::IS_ADMIN)                     
 {
   
   _motorsController = motorsController;
-  _motorsControllerCache = motorsControllerCache;
 
-  server->on(CURRENT_POSITION_ENDPOINT_PATH,
-             HTTP_GET,
-             securityManager->wrapRequest(std::bind(&CurrentPositionController::getPos, this, std::placeholders::_1),
-                                          AuthenticationPredicates::NONE_REQUIRED));
-
-  _postHandler.setMethod(HTTP_POST);
-  _postHandler.setMaxContentLength(256);
-  server->addHandler(&_postHandler);
+  addUpdateHandler([&](const String& originId) { setPos(originId); }, false);
 }
 
-void CurrentPositionController::getPos(AsyncWebServerRequest* request){
-  auto viajeActual = _motorsController->getCurrent();
+void CurrentPositionController::setPos(const String& originId){
   
-  AsyncJsonResponse* response = new AsyncJsonResponse(false);
-  JsonObject root = response->getRoot();
-  NextPositionController::read(viajeActual, root);
-  root["mode"] = _motorsController->mode;
-  root["queueLength"] = _motorsControllerCache->getQueueLength();
-
-  response->setLength();
-  request->send(response);
-}
-
-void CurrentPositionController::setPos(AsyncWebServerRequest* request, JsonVariant& json){
-  long x = json["x"];
-  long y = json["y"];
-  _motorsController->setCurrentPosition(x, y);
-
-  AsyncWebServerResponse* response = request->beginResponse(200);
-  request->send(response);
+  _motorsController->setCurrentPosition(_state.x, _state.y);
+  
 }

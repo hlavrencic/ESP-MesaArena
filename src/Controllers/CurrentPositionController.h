@@ -1,48 +1,34 @@
 #ifndef CurrentPositionController_h
-#define CurrentPositionController_h
+    #define CurrentPositionController_h
 
+    #include <HttpEndpoint.h>
+    #include <Services/MotorsController.h>
 
-#include <HttpEndpoint.h>
-#include <WebSocketTxRx.h>
-#include <Services/MotorsControllerCache.h>
+    #define CURRENT_POSITION_ENDPOINT_PATH "/rest/CurrentPosition"
 
-#define LED_PIN 2
-#define PRINT_DELAY 5000
+    class CurrentPositionController : public StatefulService<Dimensions>{
+    public:
+        CurrentPositionController(
+            AsyncWebServer* server,
+            SecurityManager* securityManager,
+            MotorsController* motorsController);
 
-#define DEFAULT_LED_STATE false
-#define OFF_STATE "OFF"
-#define ON_STATE "ON"
+        static void read(Dimensions& model, JsonObject& root){
+            root["x"] = model.x;
+            root["y"] = model.y;
+        }
 
-// Note that the built-in LED is on when the pin is low on most NodeMCU boards.
-// This is because the anode is tied to VCC and the cathode to the GPIO 4 (Arduino pin 2).
-#ifdef ESP32
-#define LED_ON 0x1
-#define LED_OFF 0x0
-#elif defined(ESP8266)
-#define LED_ON 0x0
-#define LED_OFF 0x1
-#endif
+        static StateUpdateResult update(JsonObject& root, Dimensions& model){
+            model.x = root["x"];
+            model.y = root["y"];
+            return StateUpdateResult::CHANGED;
+        }
 
-#define CURRENT_POSITION_ENDPOINT_PATH "/rest/CurrentPosition"
+    private:
+        HttpEndpoint<Dimensions> _httpEndpoint;
+        MotorsController* _motorsController;
 
-class CurrentPositionController {
- public:
-  CurrentPositionController(AsyncWebServer* server,
-                    SecurityManager* securityManager,
-                    MotorsController* motorsController,
-                    MotorsControllerCache* motorsControllerCache);
-
-
- private:
-    
-    AsyncCallbackJsonWebHandler _postHandler;
-    MotorsController* _motorsController;
-    MotorsControllerCache* _motorsControllerCache;
-
-    void getPos(AsyncWebServerRequest* request);
-
-    void setPos(AsyncWebServerRequest* request, JsonVariant& json);
-
-};
+        void setPos(const String& originId);
+    };
 
 #endif

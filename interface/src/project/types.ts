@@ -12,3 +12,7 @@ export interface LightMqttSettings {
   name: string;
   mqtt_path : string;
 }
+
+export interface DrawingState {
+  
+}

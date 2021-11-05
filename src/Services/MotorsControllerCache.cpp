@@ -6,16 +6,22 @@ MotorsControllerCache::MotorsControllerCache(MotorsController& _motorsController
 
 void MotorsControllerCache::loop(){
     motorsController->loop();
+    
+    if(motorsController->mode != MotorsControllerMode::STANDBY){
+        return;
+    }
+    
     if(cache.empty()){
         return;
     }
 
-    if(motorsController->mode == MotorsControllerMode::STANDBY){
-        auto newPos = cache.front();
-        motorsController->goTo(newPos);
-        cache.pop_front();
-        queueLength--;
-    }
+    auto newPos = cache.front();
+        
+    Serial.print("STANDBY: "); Serial.print(newPos.x); Serial.print(", "); Serial.println(newPos.y);
+
+    motorsController->goTo(newPos);
+    cache.pop_front();
+    queueLength--;
 };
 
 u_short MotorsControllerCache::getQueueLength(){
@@ -70,6 +76,8 @@ ViajeActual MotorsControllerCache::goTo(Dimensions newPos){
     cache.push_back(viaje);
     queueLength++;
     viaje.delayTotal = getTotalDelay();
+
+    Serial.print("NewPos: "); Serial.print(newPos.x); Serial.print(", "); Serial.println(newPos.y);
 
     ultimaParada = newPos;
     return viaje;
