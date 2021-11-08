@@ -50,4 +50,4 @@ class DemoInformation extends Component<NextPositionControllerProps> {
 
 }
 
-export default restController(GO_TO_ENDPOINT, DemoInformation);
+export default restController(GO_TO_ENDPOINT, DemoInformation, false);
