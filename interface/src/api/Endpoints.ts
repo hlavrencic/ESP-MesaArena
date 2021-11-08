@@ -10,6 +10,7 @@ export const SCAN_NETWORKS_ENDPOINT = ENDPOINT_ROOT + "scanNetworks";
 export const LIST_NETWORKS_ENDPOINT = ENDPOINT_ROOT + "listNetworks";
 export const WIFI_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "wifiSettings";
 export const WIFI_STATUS_ENDPOINT = ENDPOINT_ROOT + "wifiStatus";
+export const GO_TO_ENDPOINT = ENDPOINT_ROOT + "goTo";
 export const OTA_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "otaSettings";
 export const UPLOAD_FIRMWARE_ENDPOINT = ENDPOINT_ROOT + "uploadFirmware";
 export const MQTT_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "mqttSettings";
