@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { GO_TO_ENDPOINT } from '../api';
 import { restController, RestControllerProps } from '../components';
 import Drawing from '../components/SvgDrawing';
-import { SvgService, Dimensions } from '../components/SvgService';
+import { SvgService, DimensionsDataController } from '../components/SvgService';
 
-type NextPositionControllerProps = RestControllerProps<Dimensions>;
+type NextPositionControllerProps = RestControllerProps<DimensionsDataController>;
 
 class DemoInformation extends Component<NextPositionControllerProps> {
   
@@ -15,8 +15,29 @@ class DemoInformation extends Component<NextPositionControllerProps> {
     this.props.loadData();
   }
 
+  moveNext(){
+
+    this.svgService?.moveNext();
+
+    if(!this.svgService?.scaledPoint) {
+      return;
+    }
+
+    this.props.setData(this.svgService?.scaledPoint, this.props.saveData);
+    
+  }
+
   render() {
-    const { data, setData, saveData } = this.props
+    const { data } = this.props
+
+    if(this.svgService?.scaledPoint && data){
+      if(this.svgService.scaledPoint.x === data.xActual && 
+        this.svgService.scaledPoint.y === data.yActual){
+          this.moveNext();
+      } else {
+          this.props.loadData();
+      }
+    }
 
     return (
       <>
@@ -36,13 +57,7 @@ class DemoInformation extends Component<NextPositionControllerProps> {
       }}/>
       <Grid item xs={12} id="svgContainer" />
       <Button onClick={e => {
-        this.svgService?.moveNext();
-
-        if(!this.svgService?.scaledPoint) {
-          return;
-        }
-
-        setData(this.svgService?.scaledPoint, saveData);
+        this.moveNext();
         }}>SEND</Button>
       </>
     )

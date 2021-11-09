@@ -4,6 +4,11 @@ export interface Dimensions {
     x: number;
     y: number;
 }
+
+export interface DimensionsDataController extends Dimensions {
+  yActual?: number;
+  xActual?: number;
+}
   
 export class SvgService {
     static loadContent(svgContent: string, svgContainer: HTMLElement){
