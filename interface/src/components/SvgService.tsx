@@ -51,7 +51,7 @@ export class SvgService {
     private bBox: {width: number, height: number, x: number, y:number} | undefined;
     private circle: SVGCircleElement | undefined;
     private stepSize: number | undefined;
-    private precision: number = 1000;
+    private precision: number = 100;
     private scale: Dimensions = { x: 1, y: 1 };
     private scaleRatio: Dimensions = { x: 1, y: 1 };
   
@@ -82,11 +82,12 @@ export class SvgService {
         let ratio = x / y;
         if (ratio > 1) {
           this.scale.x = 4000 / x;
-          this.scale.y = this.scale.x / realRatio / ratio;
+          this.scale.y = this.scale.x / (realRatio / ratio);
         } else {
           this.scale.y = 35000 / y;
           this.scale.x = this.scale.y * realRatio * ratio;
         }
+        
   
         this.scaleRatio = scaleRatio;
       }
@@ -120,7 +121,7 @@ export class SvgService {
   
       self.circle = circle;
       self.path = path;
-      self.stepSize = path.getTotalLength() / self.precision;
+      self.stepSize = 5 //path.getTotalLength() / self.precision;
       self.maxMoment = path.getTotalLength();
       self.moment = 0;
       self.bBox = bBox;
@@ -184,9 +185,13 @@ export class SvgService {
         iterations++;
       }
   
-      self.circle.setAttribute("cx", pos.x.toString());
-      self.circle.setAttribute("cy", pos.y.toString());
-      self.scaledPoint = self.getScaledPoint(pos);
+      if(!iterations) {
+        self.scaledPoint = {x:0, y:0};
+      } else {
+        self.circle.setAttribute("cx", pos.x.toString());
+        self.circle.setAttribute("cy", pos.y.toString());
+        self.scaledPoint = self.getScaledPoint(pos);
+      }
   
       return iterations;
     }

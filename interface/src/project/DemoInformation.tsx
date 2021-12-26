@@ -17,9 +17,9 @@ class DemoInformation extends Component<NextPositionControllerProps> {
 
   moveNext(){
 
-    this.svgService?.moveNext();
+    let iterations = this.svgService?.moveNext();
 
-    if(!this.svgService?.scaledPoint) {
+    if(iterations == 0 || !this.svgService?.scaledPoint) {
       return;
     }
 
