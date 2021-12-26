@@ -61,6 +61,11 @@ void MotorsController::loop(){
         }
     }
     break;
+    case MotorsControllerMode::ERROR:
+    {
+        enableMotors(false);
+    }
+    break;
     case MotorsControllerMode::TRAVELLING:
         enableMotors(true);
         _arrived = buscaCoorrdenadas.andar();
@@ -68,6 +73,7 @@ void MotorsController::loop(){
             mode = MotorsControllerMode::STANDBY; 
             _arrivedTick = millis();
         } else if(carrito1->getState() == EstadoCalibracion::errorCalibracion || carrito2->getState() == EstadoCalibracion::errorCalibracion) {
+            Serial.println("ERROR CALIBRACION");
             mode = MotorsControllerMode::ERROR;
         }
 
@@ -78,8 +84,8 @@ void MotorsController::loop(){
         }
         break;
     default:
+        Serial.print("MODO NO RECONOCIDO: "); Serial.println(mode);
         mode = MotorsControllerMode::ERROR;
-        enableMotors(false);
         break;
     }
     

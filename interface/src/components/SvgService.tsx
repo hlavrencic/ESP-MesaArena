@@ -121,7 +121,7 @@ export class SvgService {
   
       self.circle = circle;
       self.path = path;
-      self.stepSize = 5 //path.getTotalLength() / self.precision;
+      self.stepSize = 3 //path.getTotalLength() / self.precision;
       self.maxMoment = path.getTotalLength();
       self.moment = 0;
       self.bBox = bBox;
