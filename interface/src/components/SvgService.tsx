@@ -1,9 +1,22 @@
+import internal from "stream";
+
 export interface Dimensions {
     x: number;
     y: number;
 }
+
+export interface DimensionsDataController extends Dimensions {
+  yActual?: number;
+  xActual?: number;
+}
   
 export class SvgService {
+    static loadContent(svgContent: string, svgContainer: HTMLElement){
+      let svgService = new SvgService(svgContainer);
+      svgService.loadXML(svgContent);
+      return svgService;
+    }
+
     static async load(file: File, svgContainer: HTMLElement) {
       if (!file) {
         return;
@@ -14,12 +27,11 @@ export class SvgService {
       }
   
       let fileReader = new FileReader();
-      let svgService = new SvgService(svgContainer);
   
       return await new Promise<SvgService>((resolve, reject) => {
         fileReader.onloadend = () => {
           let result = fileReader.result as string;
-          svgService.onloadEnd(result);
+          let svgService = SvgService.loadContent(result, svgContainer);
           resolve(svgService);
         };
   
@@ -36,10 +48,10 @@ export class SvgService {
     }
   
     private path: SVGPathElement | undefined;
-    private bBox: DOMRect | undefined;
+    private bBox: {width: number, height: number, x: number, y:number} | undefined;
     private circle: SVGCircleElement | undefined;
     private stepSize: number | undefined;
-    private precision: number = 1000;
+    private precision: number = 100;
     private scale: Dimensions = { x: 1, y: 1 };
     private scaleRatio: Dimensions = { x: 1, y: 1 };
   
@@ -70,16 +82,51 @@ export class SvgService {
         let ratio = x / y;
         if (ratio > 1) {
           this.scale.x = 4000 / x;
-          this.scale.y = this.scale.x / realRatio / ratio;
+          this.scale.y = this.scale.x / (realRatio / ratio);
         } else {
           this.scale.y = 35000 / y;
           this.scale.x = this.scale.y * realRatio * ratio;
         }
+        
   
         this.scaleRatio = scaleRatio;
       }
     }
   
+    loadXML(data: string){
+      let self = this;
+  
+      let container = self.svgContainer;
+      container.innerHTML = data;
+      let svg1 = container.getElementsByTagName("svg")[0];
+      let path = svg1.getElementsByTagName("path")[0];
+      let bBox = { width: +svg1.width.animVal.value, height: +svg1.height.animVal.value, x:0, y:0 };
+  
+      self.remoteAttributes(svg1);
+      let viewBoxValue = " 0 0 " + bBox.width + " " + bBox.height;
+      svg1.setAttribute("viewBox", viewBoxValue);
+  
+      // create a circle
+      let circle = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+  
+      let circleRatio = (bBox.width + bBox.height) / 100;
+      circle.setAttribute("r", circleRatio.toString());
+      circle.setAttribute("fill", "red");
+  
+      // attach it to the container
+      svg1.appendChild(circle);
+  
+      self.circle = circle;
+      self.path = path;
+      self.stepSize = 5 //path.getTotalLength() / self.precision;
+      self.maxMoment = path.getTotalLength();
+      self.moment = 0;
+      self.bBox = bBox;
+    }
+
     onloadEnd(result: string) {
       let self = this;
   
@@ -138,9 +185,13 @@ export class SvgService {
         iterations++;
       }
   
-      self.circle.setAttribute("cx", pos.x.toString());
-      self.circle.setAttribute("cy", pos.y.toString());
-      self.scaledPoint = self.getScaledPoint(pos);
+      if(!iterations) {
+        self.scaledPoint = {x:0, y:0};
+      } else {
+        self.circle.setAttribute("cx", pos.x.toString());
+        self.circle.setAttribute("cy", pos.y.toString());
+        self.scaledPoint = self.getScaledPoint(pos);
+      }
   
       return iterations;
     }

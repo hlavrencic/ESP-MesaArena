@@ -1,77 +1,68 @@
+import { Button, Grid } from '@material-ui/core';
 import React, { Component } from 'react';
-import { Typography, Box, List, ListItem, ListItemText } from '@material-ui/core';
-import { SectionContent } from '../components';
+import { GO_TO_ENDPOINT } from '../api';
+import { restController, RestControllerProps } from '../components';
+import Drawing from '../components/SvgDrawing';
+import { SvgService, DimensionsDataController } from '../components/SvgService';
 
-class DemoInformation extends Component {
+type NextPositionControllerProps = RestControllerProps<DimensionsDataController>;
+
+class DemoInformation extends Component<NextPositionControllerProps> {
+  
+  svgService: SvgService | null = null;
+  
+  componentDidMount() {
+    this.props.loadData();
+  }
+
+  moveNext(){
+
+    let iterations = this.svgService?.moveNext();
+
+    if(iterations == 0 || !this.svgService?.scaledPoint) {
+      return;
+    }
+
+    this.props.setData(this.svgService?.scaledPoint, this.props.saveData);
+    
+  }
 
   render() {
+    const { data } = this.props
+
+    if(this.svgService?.scaledPoint && data){
+      if(this.svgService.scaledPoint.x === data.xActual && 
+        this.svgService.scaledPoint.y === data.yActual){
+          this.moveNext();
+      } else {
+          this.props.loadData();
+      }
+    }
+
     return (
-      <SectionContent title='Demo Information' titleGutter>
-        <Typography variant="body1" paragraph>
-          This simple demo project allows you to control the built-in LED.
-          It demonstrates how the esp8266-react framework may be extended for your own IoT project.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          It is recommended that you keep your project interface code under the project directory.
-          This serves to isolate your project code from the from the rest of the user interface which should
-          simplify merges should you wish to update your project with future framework changes.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          The demo project interface code is stored in the 'interface/src/project' directory:
-        </Typography>        
-        <List>
-          <ListItem>
-            <ListItemText
-              primary="ProjectMenu.tsx"
-              secondary="You can add your project's screens to the side bar here."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="ProjectRouting.tsx"
-              secondary="The routing which controls the screens of your project."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="DemoProject.tsx"
-              secondary="This screen, with tabs and tab routing."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="DemoInformation.tsx"
-              secondary="The demo information page."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="LightStateRestController.tsx"
-              secondary="A form which lets the user control the LED over a REST service."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="LightStateWebSocketController.tsx"
-              secondary="A form which lets the user control and monitor the status of the LED over WebSockets."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="LightMqttSettingsController.tsx"
-              secondary="A form which lets the user change the MQTT settings for MQTT based control of the LED."
-            />
-          </ListItem>
-        </List>
-        <Box mt={2}>
-          <Typography variant="body1">
-            See the project <a href="https://github.com/rjwats/esp8266-react/">README</a> for a full description of the demo project.
-          </Typography>
-        </Box>
-      </SectionContent>
+      <>
+      <Drawing onDataChange={inputData => {
+        if(!inputData){
+          return;
+        }
+
+        let svgContainer = document.getElementById("svgContainer");
+        if(!svgContainer){
+            throw new Error("svgContainer not found");
+        }
+
+        console.log(inputData);
+        this.svgService = SvgService.loadContent(inputData as string, svgContainer);
+        this.svgService.configure({x: 4000, y:35000}, null);
+      }}/>
+      <Grid item xs={12} id="svgContainer" />
+      <Button onClick={e => {
+        this.moveNext();
+        }}>SEND</Button>
+      </>
     )
   }
 
 }
 
-export default DemoInformation;
+export default restController(GO_TO_ENDPOINT, DemoInformation, false);

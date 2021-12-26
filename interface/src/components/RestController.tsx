@@ -32,7 +32,7 @@ interface RestControllerState<D> {
   errorMessage?: string;
 }
 
-export function restController<D, P extends RestControllerProps<D>>(endpointUrl: string, RestController: React.ComponentType<P & RestControllerProps<D>>) {
+export function restController<D, P extends RestControllerProps<D>>(endpointUrl: string, RestController: React.ComponentType<P & RestControllerProps<D>>, snackbarEnabled = true) {
   return withSnackbar(
     class extends React.Component<Omit<P, keyof RestControllerProps<D>> & WithSnackbarProps, RestControllerState<D>> {
 
@@ -84,7 +84,7 @@ export function restController<D, P extends RestControllerProps<D>>(endpointUrl:
           }
           throw Error("Invalid status code: " + response.status);
         }).then(json => {
-          this.props.enqueueSnackbar("Update successful.", { variant: 'success' });
+          snackbarEnabled && this.props.enqueueSnackbar("Update successful.", { variant: 'success' });
           this.setState({ data: json, loading: false });
         }).catch(error => {
           const errorMessage = error.message || "Unknown error";
