@@ -8,11 +8,28 @@ import { SvgService, DimensionsDataController } from '../components/SvgService';
 type NextPositionControllerProps = RestControllerProps<DimensionsDataController>;
 
 class DemoInformation extends Component<NextPositionControllerProps> {
-  
+  intervalo: NodeJS.Timeout | null = null;
   svgService: SvgService | null = null;
   
   componentDidMount() {
-    this.props.loadData();
+    let self = this;
+    // Registro el servicio que se encarga se consultar la posicion periodicamente
+    self.intervalo = setInterval(() => {
+      const { data } = self.props
+
+      if(self.svgService?.scaledPoint && data){
+        if(self.svgService.scaledPoint.x === data.xActual && 
+          self.svgService.scaledPoint.y === data.yActual){
+            self.moveNext();
+        }
+      }
+
+      self.props.loadData();
+    }, 500);
+  }
+
+  componentWillUnmount(){
+    this.intervalo && clearInterval(this.intervalo);
   }
 
   moveNext(){
@@ -28,16 +45,7 @@ class DemoInformation extends Component<NextPositionControllerProps> {
   }
 
   render() {
-    const { data } = this.props
-
-    if(this.svgService?.scaledPoint && data){
-      if(this.svgService.scaledPoint.x === data.xActual && 
-        this.svgService.scaledPoint.y === data.yActual){
-          this.moveNext();
-      } else {
-          this.props.loadData();
-      }
-    }
+    
 
     return (
       <>
