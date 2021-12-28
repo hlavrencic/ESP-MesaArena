@@ -8,6 +8,7 @@ export interface Dimensions {
 export interface DimensionsDataController extends Dimensions {
   yActual?: number;
   xActual?: number;
+  queueLength?: number;
 }
   
 export class SvgService {

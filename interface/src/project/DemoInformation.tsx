@@ -18,9 +18,10 @@ class DemoInformation extends Component<NextPositionControllerProps> {
       const { data } = self.props
 
       if(self.svgService?.scaledPoint && data){
-        if(self.svgService.scaledPoint.x === data.xActual && 
-          self.svgService.scaledPoint.y === data.yActual){
+        if(data.queueLength !== undefined && data.queueLength <= 10){
             self.moveNext();
+            self.moveNext();
+            self.moveNext();            
         }
       }
 
@@ -36,7 +37,7 @@ class DemoInformation extends Component<NextPositionControllerProps> {
 
     let iterations = this.svgService?.moveNext();
 
-    if(iterations == 0 || !this.svgService?.scaledPoint) {
+    if(iterations === 0 || !this.svgService?.scaledPoint) {
       return;
     }
 
